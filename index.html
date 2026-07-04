@@ -3,514 +3,725 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FIKTH PRO — ระบบออโต้ที่ทำได้จริง</title>
-<meta name="description" content="FIKTH PRO โปรแกรม Automation Facebook, Discord, Line สำหรับธุรกิจออนไลน์ไทย ทำงานแทนคุณ 24 ชั่วโมง">
-<meta property="og:title" content="FIKTH PRO — ระบบออโต้ที่ทำได้จริง">
-<meta property="og:description" content="โปรแกรม Automation สำหรับธุรกิจออนไลน์ไทย ทำงานแทนคุณตลอด 24 ชั่วโมง">
-<meta property="og:image" content="og-image.png">
+<title>FIKTH PRO — ปั้มยอด ไม่ต้องนั่งเฝ้า</title>
+<meta name="description" content="โปรแกรม Automation Facebook, Discord, Line สำหรับธุรกิจออนไลน์ไทย">
 <style>
-  :root {
-    --bg: #09090f;
-    --bg2: #111118;
-    --bg3: #1a1a24;
-    --border: #2a2a3a;
-    --text: #e8eaf0;
-    --text2: #8890a8;
-    --accent: #00e5a0;
-    --accent2: #00b87a;
-    --glow: rgba(0,229,160,0.18);
-    --purple: #7c6df0;
-    --blue: #4fa3ff;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; scroll-behavior: smooth; }
-  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; line-height: 1.6; overflow-x: hidden; }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
-  /* NAV */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    background: rgba(9,9,15,0.85); backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--border);
-    padding: 0 32px; height: 60px;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .nav-brand { font-size: 22px; font-weight: 800; color: var(--accent); letter-spacing: 3px; }
-  .nav-links { display: flex; gap: 28px; align-items: center; }
-  .nav-links a { color: var(--text2); text-decoration: none; font-size: 14px; transition: color 0.2s; }
-  .nav-links a:hover { color: var(--accent); }
-  .nav-cta {
-    background: var(--accent); color: #000; padding: 8px 20px;
-    border-radius: 8px; font-weight: 700; font-size: 14px;
-    text-decoration: none; transition: opacity 0.2s;
-  }
-  .nav-cta:hover { opacity: 0.85; color: #000; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* HERO */
-  .hero {
-    min-height: 100vh; display: flex; align-items: center; justify-content: center;
-    text-align: center; padding: 100px 24px 60px;
-    position: relative; overflow: hidden;
-  }
-  .hero::before {
-    content: ''; position: absolute; top: 20%; left: 50%;
-    transform: translateX(-50%);
-    width: 600px; height: 600px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(0,229,160,0.08) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .hero-inner { position: relative; max-width: 760px; }
-  .hero-badge {
-    display: inline-block; background: var(--accent-dim, rgba(0,229,160,0.12));
-    color: var(--accent); border: 1px solid rgba(0,229,160,0.3);
-    padding: 5px 16px; border-radius: 20px; font-size: 12px; font-weight: 600;
-    letter-spacing: 1px; text-transform: uppercase; margin-bottom: 24px;
-  }
-  .hero h1 {
-    font-size: clamp(40px, 7vw, 72px); font-weight: 900; line-height: 1.1;
-    margin-bottom: 20px; letter-spacing: -1px;
-  }
-  .hero h1 .grad {
-    background: linear-gradient(135deg, var(--accent) 0%, var(--blue) 100%);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  .hero-sub {
-    font-size: clamp(16px, 2.5vw, 20px); color: var(--text2);
-    max-width: 560px; margin: 0 auto 40px; line-height: 1.7;
-  }
-  .hero-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-  .btn-hero {
-    padding: 14px 32px; border-radius: 10px; font-size: 16px; font-weight: 700;
-    text-decoration: none; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px;
-  }
-  .btn-primary-hero { background: var(--accent); color: #000; }
-  .btn-primary-hero:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,229,160,0.3); }
-  .btn-outline-hero { background: transparent; color: var(--text); border: 1px solid var(--border); }
-  .btn-outline-hero:hover { border-color: var(--accent); color: var(--accent); }
+:root {
+  --bg:      #070709;
+  --bg2:     #0e0e14;
+  --bg3:     #17171f;
+  --border:  #1e1e2a;
+  --border2: #2a2a3a;
+  --text:    #e2e4ed;
+  --muted:   #6b7280;
+  --accent:  #00e5a0;
+  --accent-d:#00b87a;
+  --glow:    rgba(0,229,160,0.15);
+  --r: 14px;
+}
 
-  .hero-stats {
-    margin-top: 56px; display: flex; gap: 40px; justify-content: center; flex-wrap: wrap;
-  }
-  .hero-stat { text-align: center; }
-  .hero-stat .num { font-size: 28px; font-weight: 800; color: var(--accent); }
-  .hero-stat .lbl { font-size: 12px; color: var(--text2); margin-top: 2px; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
 
-  /* SECTION */
-  section { padding: 80px 24px; max-width: 1100px; margin: 0 auto; }
-  .section-label {
-    color: var(--accent); font-size: 12px; font-weight: 700; letter-spacing: 2px;
-    text-transform: uppercase; margin-bottom: 12px;
-  }
-  .section-title { font-size: clamp(28px, 4vw, 42px); font-weight: 800; line-height: 1.2; margin-bottom: 16px; }
-  .section-sub { color: var(--text2); font-size: 16px; max-width: 560px; }
-  .section-divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+/* ── NAV ─────────────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  padding: 0 40px;
+  height: 58px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(7,7,9,0.7);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.logo { font-size: 18px; font-weight: 900; letter-spacing: 4px; color: var(--accent); }
+.nav-r { display: flex; align-items: center; gap: 8px; }
+.nav-link {
+  color: var(--muted); font-size: 13px; text-decoration: none;
+  padding: 6px 14px; border-radius: 8px; transition: color .2s;
+}
+.nav-link:hover { color: var(--text); }
+.nav-btn {
+  background: var(--accent); color: #000;
+  font-size: 13px; font-weight: 700;
+  padding: 7px 18px; border-radius: 8px;
+  text-decoration: none; transition: opacity .2s;
+}
+.nav-btn:hover { opacity: .85; }
 
-  /* FEATURES */
-  .features-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px; margin-top: 48px;
-  }
-  .feature-card {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 14px; padding: 28px; transition: all 0.25s;
-  }
-  .feature-card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,229,160,0.08); }
-  .feature-icon { font-size: 36px; margin-bottom: 16px; }
-  .feature-title { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
-  .feature-desc { color: var(--text2); font-size: 14px; line-height: 1.6; }
-  .feature-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
-  .tag {
-    background: var(--bg3); color: var(--text2); border: 1px solid var(--border);
-    padding: 2px 10px; border-radius: 20px; font-size: 11px;
-  }
+/* ── SECTIONS ─────────────────────────────────────────────── */
+.section {
+  min-height: 100vh;
+  display: flex; align-items: center;
+  padding: 100px 40px 80px;
+  border-bottom: 1px solid var(--border);
+}
+.container { max-width: 1080px; width: 100%; margin: 0 auto; }
 
-  /* HOW IT WORKS */
-  .how-wrap { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0; margin-top: 48px; }
-  .step {
-    text-align: center; padding: 32px 24px; position: relative;
-    border-right: 1px solid var(--border);
-  }
-  .step:last-child { border-right: none; }
-  .step-num {
-    width: 48px; height: 48px; border-radius: 50%; background: var(--glow);
-    border: 2px solid var(--accent); color: var(--accent);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px; font-weight: 800; margin: 0 auto 16px;
-  }
-  .step-title { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
-  .step-desc { color: var(--text2); font-size: 13px; line-height: 1.6; }
+/* ── HERO ─────────────────────────────────────────────────── */
+#hero {
+  background:
+    radial-gradient(ellipse 80% 60% at 60% 40%, rgba(0,229,160,0.04) 0%, transparent 70%),
+    var(--bg);
+}
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 60px; align-items: center;
+}
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(0,229,160,0.08); border: 1px solid rgba(0,229,160,0.2);
+  color: var(--accent); font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+  text-transform: uppercase; padding: 5px 14px; border-radius: 100px;
+  margin-bottom: 28px;
+}
+.hero-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: block; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-  /* PRICING */
-  .pricing-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 20px; margin-top: 48px; max-width: 900px; margin-left: auto; margin-right: auto;
-  }
-  .price-card {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 16px; padding: 32px; text-align: center; transition: all 0.25s;
-    position: relative;
-  }
-  .price-card.popular {
-    border-color: var(--accent); background: linear-gradient(135deg, rgba(0,229,160,0.06) 0%, var(--bg2) 100%);
-  }
-  .popular-badge {
-    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
-    background: var(--accent); color: #000; padding: 3px 16px; border-radius: 20px;
-    font-size: 11px; font-weight: 800; white-space: nowrap;
-  }
-  .price-plan { font-size: 13px; color: var(--text2); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; }
-  .price-duration { font-size: 32px; font-weight: 900; color: var(--text); margin-bottom: 4px; }
-  .price-note { color: var(--text2); font-size: 12px; margin-bottom: 24px; }
-  .price-ask {
-    font-size: 20px; font-weight: 800; color: var(--accent);
-    margin-bottom: 8px;
-  }
-  .price-features { list-style: none; text-align: left; margin-bottom: 28px; display: flex; flex-direction: column; gap: 8px; }
-  .price-features li { font-size: 13px; color: var(--text2); display: flex; gap: 8px; align-items: flex-start; }
-  .price-features li::before { content: '✓'; color: var(--accent); font-weight: 700; flex-shrink: 0; }
-  .btn-buy {
-    display: block; padding: 12px; border-radius: 9px; font-size: 14px; font-weight: 700;
-    text-decoration: none; transition: all 0.2s; text-align: center;
-  }
-  .btn-buy-outline { border: 1px solid var(--border); color: var(--text); }
-  .btn-buy-outline:hover { border-color: var(--accent); color: var(--accent); }
-  .btn-buy-solid { background: var(--accent); color: #000; }
-  .btn-buy-solid:hover { opacity: 0.85; transform: translateY(-1px); }
-  .pricing-note { text-align: center; color: var(--text2); font-size: 13px; margin-top: 20px; }
-  .pricing-note a { color: var(--accent); text-decoration: none; }
+h1 {
+  font-size: clamp(38px, 5.5vw, 64px);
+  font-weight: 900; line-height: 1.05;
+  letter-spacing: -2px; margin-bottom: 22px;
+}
+.g { background: linear-gradient(120deg, var(--accent) 0%, #4fa3ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.hero-desc { color: var(--muted); font-size: 16px; line-height: 1.75; max-width: 440px; margin-bottom: 36px; }
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn-main {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent); color: #000;
+  font-size: 14px; font-weight: 700;
+  padding: 12px 26px; border-radius: 10px;
+  text-decoration: none; transition: all .2s;
+}
+.btn-main:hover { transform: translateY(-2px); box-shadow: 0 10px 40px var(--glow); }
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--bg3); color: var(--text);
+  border: 1px solid var(--border2);
+  font-size: 14px; font-weight: 600;
+  padding: 12px 26px; border-radius: 10px;
+  text-decoration: none; transition: all .2s;
+}
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
 
-  /* CONTACT */
-  .contact-wrap { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-  .contact-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 16px; margin-top: 48px;
-  }
-  .contact-card {
-    border: 1px solid var(--border); border-radius: 14px; padding: 24px 28px;
-    text-decoration: none; color: var(--text); transition: all 0.25s;
-    display: flex; align-items: center; gap: 16px;
-  }
-  .contact-card:hover { transform: translateY(-3px); }
-  .contact-card.line { background: rgba(0,185,0,0.06); border-color: rgba(0,185,0,0.3); }
-  .contact-card.line:hover { border-color: #00b900; box-shadow: 0 8px 32px rgba(0,185,0,0.12); }
-  .contact-card.fb { background: rgba(66,103,178,0.06); border-color: rgba(66,103,178,0.3); }
-  .contact-card.fb:hover { border-color: #4267b2; box-shadow: 0 8px 32px rgba(66,103,178,0.12); }
-  .contact-card.dc { background: rgba(88,101,242,0.06); border-color: rgba(88,101,242,0.3); }
-  .contact-card.dc:hover { border-color: #5865f2; box-shadow: 0 8px 32px rgba(88,101,242,0.12); }
-  .contact-icon { font-size: 36px; flex-shrink: 0; }
-  .contact-name { font-size: 16px; font-weight: 700; }
-  .contact-handle { font-size: 13px; color: var(--text2); margin-top: 2px; }
+/* HERO CARD (right side) */
+.hero-card {
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+}
+.hc-bar {
+  background: var(--bg3); padding: 12px 16px;
+  display: flex; align-items: center; gap: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.hc-dot { width: 10px; height: 10px; border-radius: 50%; }
+.hc-body { padding: 20px; }
+.hc-stat-row { display: flex; gap: 10px; margin-bottom: 12px; }
+.hc-stat {
+  flex: 1; background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 16px;
+}
+.hc-stat .v { font-size: 22px; font-weight: 800; }
+.hc-stat .l { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.hc-stat.green .v { color: var(--accent); }
+.hc-stat.blue .v { color: #4fa3ff; }
+.hc-stat.red .v { color: #f87171; }
+.hc-list { display: flex; flex-direction: column; gap: 8px; }
+.hc-item {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.hc-key { font-family: monospace; font-size: 11px; color: #4fa3ff; }
+.hc-badge {
+  font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px;
+}
+.hc-badge.ok { background: rgba(0,229,160,.12); color: var(--accent); }
+.hc-badge.warn { background: rgba(251,191,36,.12); color: #fbbf24; }
 
-  /* CTA SECTION */
-  .cta-section {
-    text-align: center; padding: 80px 24px;
-    background: radial-gradient(ellipse at center, rgba(0,229,160,0.06) 0%, transparent 70%);
-    border-top: 1px solid var(--border);
-  }
-  .cta-section h2 { font-size: clamp(28px, 4vw, 48px); font-weight: 900; margin-bottom: 16px; }
-  .cta-section p { color: var(--text2); font-size: 16px; margin-bottom: 36px; }
+/* ── FEATURES ─────────────────────────────────────────────── */
+#features { background: var(--bg2); }
+.section-eyebrow { color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 14px; }
+.section-h { font-size: clamp(28px, 4vw, 44px); font-weight: 800; letter-spacing: -1px; line-height: 1.15; margin-bottom: 14px; }
+.section-sub { color: var(--muted); font-size: 15px; max-width: 480px; line-height: 1.7; margin-bottom: 52px; }
 
-  /* FOOTER */
-  footer {
-    border-top: 1px solid var(--border); padding: 28px 32px;
-    display: flex; align-items: center; justify-content: space-between;
-    flex-wrap: wrap; gap: 12px;
-  }
-  .footer-brand { font-weight: 800; color: var(--accent); letter-spacing: 2px; }
-  .footer-text { color: var(--text2); font-size: 12px; }
-  .footer-links { display: flex; gap: 20px; }
-  .footer-links a { color: var(--text2); text-decoration: none; font-size: 12px; }
-  .footer-links a:hover { color: var(--accent); }
+.feat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+.feat-item {
+  background: var(--bg2); padding: 32px 28px;
+  transition: background .2s;
+}
+.feat-item:hover { background: var(--bg3); }
+.feat-ico { font-size: 28px; margin-bottom: 14px; }
+.feat-name { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+.feat-desc { font-size: 13px; color: var(--muted); line-height: 1.65; }
 
-  /* RESPONSIVE */
-  @media (max-width: 640px) {
-    nav { padding: 0 16px; }
-    .nav-links { display: none; }
-    .step { border-right: none; border-bottom: 1px solid var(--border); }
-    .step:last-child { border-bottom: none; }
-    footer { justify-content: center; text-align: center; }
-  }
+/* ── HOW ──────────────────────────────────────────────────── */
+#how { background: var(--bg); }
+.how-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.steps { display: flex; flex-direction: column; gap: 0; }
+.step-item {
+  display: flex; gap: 20px; padding: 24px 0;
+  border-bottom: 1px solid var(--border);
+  transition: all .2s; cursor: default;
+}
+.step-item:last-child { border-bottom: none; }
+.step-item:hover .step-num { background: var(--accent); color: #000; }
+.step-num {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid var(--border2); color: var(--muted);
+  font-size: 13px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all .2s;
+}
+.step-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+.step-desc { font-size: 13px; color: var(--muted); line-height: 1.65; }
 
-  /* ANIMATIONS */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .hero-inner { animation: fadeUp 0.7s ease both; }
-  .feature-card { animation: fadeUp 0.5s ease both; }
-  .feature-card:nth-child(2) { animation-delay: 0.1s; }
-  .feature-card:nth-child(3) { animation-delay: 0.2s; }
-  .feature-card:nth-child(4) { animation-delay: 0.3s; }
-  .feature-card:nth-child(5) { animation-delay: 0.4s; }
-  .feature-card:nth-child(6) { animation-delay: 0.5s; }
+.how-visual {
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: 18px; padding: 28px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+}
+.terminal-bar {
+  display: flex; align-items: center; gap: 6px; margin-bottom: 20px;
+}
+.t-dot { width: 10px; height: 10px; border-radius: 50%; }
+.terminal-body { display: flex; flex-direction: column; gap: 10px; }
+.t-line {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 14px;
+}
+.t-icon { font-size: 16px; }
+.t-text { font-size: 12px; }
+.t-text .label { color: var(--muted); }
+.t-text .val { color: var(--text); font-weight: 600; }
+.t-bar-wrap { margin-top: 4px; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.t-bar-fill { height: 100%; border-radius: 2px; background: var(--accent); }
+.t-status { margin-left: auto; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+.t-status.run { background: rgba(0,229,160,.12); color: var(--accent); }
+.t-status.idle { background: rgba(107,114,128,.12); color: var(--muted); }
+
+/* ── PRICING ──────────────────────────────────────────────── */
+#pricing { background: var(--bg2); }
+.price-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 16px; margin-top: 0;
+}
+.price-card {
+  background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: var(--r); padding: 32px; position: relative;
+  transition: border-color .2s;
+}
+.price-card:hover { border-color: var(--border2); }
+.price-card.featured {
+  background: linear-gradient(145deg, rgba(0,229,160,.07) 0%, var(--bg3) 60%);
+  border-color: rgba(0,229,160,.35);
+}
+.pop-tag {
+  position: absolute; top: -11px; left: 28px;
+  background: var(--accent); color: #000;
+  font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
+  padding: 3px 12px; border-radius: 100px;
+}
+.p-plan { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; }
+.p-dur { font-size: 34px; font-weight: 900; letter-spacing: -1px; margin-bottom: 4px; }
+.p-note { font-size: 12px; color: var(--muted); margin-bottom: 28px; }
+.p-list { list-style: none; display: flex; flex-direction: column; gap: 9px; margin-bottom: 28px; }
+.p-list li { font-size: 13px; color: var(--muted); display: flex; gap: 9px; align-items: flex-start; }
+.p-list li::before { content: '✓'; color: var(--accent); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+.p-btn {
+  display: block; text-align: center; padding: 11px;
+  border-radius: 9px; font-size: 13px; font-weight: 700;
+  text-decoration: none; transition: all .2s;
+}
+.p-btn-outline { border: 1px solid var(--border2); color: var(--text); }
+.p-btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+.p-btn-fill { background: var(--accent); color: #000; }
+.p-btn-fill:hover { opacity: .85; transform: translateY(-1px); }
+
+/* ── KEY CHECK (LOGIN) ────────────────────────────────────── */
+#keycheck {
+  background: var(--bg);
+  background-image: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0,229,160,0.04) 0%, transparent 70%);
+}
+.keycheck-inner { max-width: 520px; margin: 0 auto; text-align: center; }
+.keycheck-inner .section-h { margin-bottom: 10px; }
+.keycheck-inner .section-sub { margin: 0 auto 36px; text-align: center; }
+
+.key-form {
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: 16px; padding: 32px;
+}
+.key-input-wrap { position: relative; margin-bottom: 12px; }
+.key-input {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border2);
+  color: var(--text); font-family: monospace; font-size: 14px;
+  padding: 13px 16px; border-radius: 10px;
+  outline: none; transition: border-color .2s; text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.key-input::placeholder { color: var(--muted); text-transform: none; letter-spacing: 0; font-family: 'Inter', sans-serif; }
+.key-input:focus { border-color: var(--accent); }
+.key-submit {
+  width: 100%; background: var(--accent); color: #000;
+  border: none; padding: 13px; border-radius: 10px;
+  font-size: 14px; font-weight: 700; cursor: pointer;
+  transition: all .2s; letter-spacing: .3px;
+}
+.key-submit:hover { opacity: .85; }
+.key-submit:disabled { opacity: .5; cursor: not-allowed; }
+
+.key-result {
+  margin-top: 16px; padding: 16px 20px;
+  border-radius: 10px; display: none;
+  text-align: left;
+}
+.key-result.ok { background: rgba(0,229,160,.08); border: 1px solid rgba(0,229,160,.25); }
+.key-result.err { background: rgba(248,113,113,.08); border: 1px solid rgba(248,113,113,.25); }
+.kr-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,.05); }
+.kr-row:last-child { border-bottom: none; }
+.kr-label { font-size: 12px; color: var(--muted); }
+.kr-val { font-size: 13px; font-weight: 600; }
+.kr-val.green { color: var(--accent); }
+.kr-val.red { color: #f87171; }
+.kr-val.yellow { color: #fbbf24; }
+
+/* ── CONTACT ──────────────────────────────────────────────── */
+#contact { background: var(--bg2); }
+.contact-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+.contact-cards { display: flex; flex-direction: column; gap: 12px; }
+.cc {
+  display: flex; align-items: center; gap: 16px;
+  background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: 12px; padding: 18px 22px;
+  text-decoration: none; color: var(--text);
+  transition: all .25s;
+}
+.cc:hover { transform: translateX(6px); }
+.cc.line:hover { border-color: #00b900; }
+.cc.fb:hover { border-color: #1877f2; }
+.cc.dc:hover { border-color: #5865f2; }
+.cc-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.cc.line .cc-icon { background: rgba(0,185,0,.12); }
+.cc.fb .cc-icon { background: rgba(24,119,242,.12); }
+.cc.dc .cc-icon { background: rgba(88,101,242,.12); }
+.cc-name { font-size: 14px; font-weight: 700; }
+.cc-handle { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.cc-arrow { margin-left: auto; color: var(--muted); font-size: 16px; }
+
+/* ── FOOTER ───────────────────────────────────────────────── */
+footer {
+  padding: 28px 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-top: 1px solid var(--border);
+}
+.f-logo { font-size: 16px; font-weight: 900; letter-spacing: 3px; color: var(--accent); }
+.f-links { display: flex; gap: 20px; }
+.f-links a { color: var(--muted); text-decoration: none; font-size: 12px; transition: color .2s; }
+.f-links a:hover { color: var(--accent); }
+.f-copy { font-size: 12px; color: var(--muted); }
+
+/* ── RESPONSIVE ───────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .hero-grid { grid-template-columns: 1fr; }
+  .hero-card { display: none; }
+  .feat-grid { grid-template-columns: 1fr 1fr; }
+  .how-grid { grid-template-columns: 1fr; }
+  .how-visual { display: none; }
+  .price-grid { grid-template-columns: 1fr; max-width: 380px; }
+  .contact-inner { grid-template-columns: 1fr; }
+  nav { padding: 0 20px; }
+  .section { padding: 90px 20px 60px; }
+  footer { flex-direction: column; gap: 12px; text-align: center; padding: 24px 20px; }
+}
+@media (max-width: 600px) {
+  .feat-grid { grid-template-columns: 1fr; }
+  h1 { letter-spacing: -1px; }
+}
 </style>
 </head>
 <body>
 
 <!-- NAV -->
 <nav>
-  <div class="nav-brand">FIKTH</div>
-  <div class="nav-links">
-    <a href="#features">ฟีเจอร์</a>
-    <a href="#how">วิธีใช้</a>
-    <a href="#pricing">ราคา</a>
-    <a href="#contact">ติดต่อ</a>
-    <a href="#contact" class="nav-cta">สั่งซื้อ →</a>
+  <div class="logo">FIKTH</div>
+  <div class="nav-r">
+    <a href="#features" class="nav-link">ฟีเจอร์</a>
+    <a href="#pricing" class="nav-link">ราคา</a>
+    <a href="#keycheck" class="nav-link">ตรวจสอบคีย์</a>
+    <a href="#contact" class="nav-btn">สั่งซื้อ →</a>
   </div>
 </nav>
 
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-inner">
-    <div class="hero-badge">🚀 FIKTH PRO v4.4 — พร้อมใช้งาน</div>
-    <h1>
-      ปั้มยอด อัตโนมัติ<br>
-      <span class="grad">ไม่ต้องนั่งเฝ้า</span>
-    </h1>
-    <p class="hero-sub">
-      โปรแกรม Automation สำหรับธุรกิจออนไลน์ไทย<br>
-      ทำ Facebook, Discord, Line แทนคุณ 24 ชั่วโมง ทุกวัน
+<!-- ① HERO -->
+<section class="section" id="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-tag">FIKTH PRO v4.4 — พร้อมใช้งาน</div>
+        <h1>ปั้มยอด<br><span class="g">อัตโนมัติ</span><br>ไม่ต้องนั่งเฝ้า</h1>
+        <p class="hero-desc">โปรแกรมจัดการ Facebook, Discord และ Line แทนคุณทุกวัน ตั้งครั้งเดียว ปล่อยให้มันทำงานเอง</p>
+        <div class="hero-actions">
+          <a href="#contact" class="btn-main">💬 สั่งซื้อเลย</a>
+          <a href="#features" class="btn-ghost">ดูฟีเจอร์ทั้งหมด</a>
+        </div>
+      </div>
+      <div class="hero-card">
+        <div class="hc-bar">
+          <div class="hc-dot" style="background:#f87171"></div>
+          <div class="hc-dot" style="background:#fbbf24"></div>
+          <div class="hc-dot" style="background:#00e5a0"></div>
+          <span style="font-size:11px;color:var(--muted);margin-left:8px">FIKTH PRO — Dashboard</span>
+        </div>
+        <div class="hc-body">
+          <div class="hc-stat-row">
+            <div class="hc-stat green"><div class="v">1,240</div><div class="l">คอมเมนต์วันนี้</div></div>
+            <div class="hc-stat blue"><div class="v">86</div><div class="l">กลุ่มเป้าหมาย</div></div>
+            <div class="hc-stat red"><div class="v">3</div><div class="l">คิวรอ</div></div>
+          </div>
+          <div class="hc-list">
+            <div class="hc-item">
+              <div>
+                <div style="font-size:12px;font-weight:600">Facebook Comment</div>
+                <div class="t-bar-wrap" style="width:160px;margin-top:6px"><div class="t-bar-fill" style="width:82%"></div></div>
+              </div>
+              <div class="hc-badge ok">กำลังทำงาน</div>
+            </div>
+            <div class="hc-item">
+              <div>
+                <div style="font-size:12px;font-weight:600">Discord DM</div>
+                <div class="t-bar-wrap" style="width:160px;margin-top:6px"><div class="t-bar-fill" style="width:55%;background:#4fa3ff"></div></div>
+              </div>
+              <div class="hc-badge ok" style="color:#4fa3ff;background:rgba(79,163,255,.12)">กำลังทำงาน</div>
+            </div>
+            <div class="hc-item">
+              <div style="font-size:12px;font-weight:600">Line Chat</div>
+              <div class="hc-badge warn">รอ</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ② FEATURES -->
+<section class="section" id="features">
+  <div class="container">
+    <div class="section-eyebrow">ฟีเจอร์</div>
+    <div class="section-h">ครบทุกอย่างในหน้าต่างเดียว</div>
+    <p class="section-sub">ไม่ต้องเปิดหลายแท็บ ไม่ต้องนั่งคอยดู</p>
+    <div class="feat-grid">
+      <div class="feat-item">
+        <div class="feat-ico">📘</div>
+        <div class="feat-name">Facebook Bot</div>
+        <div class="feat-desc">คอมเมนต์, โพสต์กลุ่ม, ส่งข้อความ, เข้ากลุ่มเป้าหมาย — อัตโนมัติทั้งหมด</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-ico">🎮</div>
+        <div class="feat-name">Discord Bot</div>
+        <div class="feat-desc">ส่งข้อความใน server, DM สมาชิก, เพิ่มเพื่อน — หาลูกค้าในชุมชน Discord</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-ico">💬</div>
+        <div class="feat-name">Line & TikTok</div>
+        <div class="feat-desc">Panel ควบคุม Line และ TikTok รวมอยู่ในหน้าเดียว สลับได้ทันที</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-ico">🎯</div>
+        <div class="feat-name">Target Queue</div>
+        <div class="feat-desc">วางคิวเป้าหมายไม่จำกัด ติดตามสถานะแต่ละรายการแบบ real-time</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-ico">🔄</div>
+        <div class="feat-name">อัปเดตอัตโนมัติ</div>
+        <div class="feat-desc">โปรแกรมดาวน์โหลดเวอร์ชันใหม่เองทุกครั้งที่มีอัปเดต ไม่ต้องลงใหม่</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-ico">📊</div>
+        <div class="feat-name">Stats & Log</div>
+        <div class="feat-desc">ดูสถิติและ log ประจำวัน วิเคราะห์ผลการทำงานได้ทันที</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ③ HOW IT WORKS -->
+<section class="section" id="how">
+  <div class="container">
+    <div class="how-grid">
+      <div>
+        <div class="section-eyebrow">วิธีใช้งาน</div>
+        <div class="section-h">เริ่มได้ใน<br>3 ขั้นตอน</div>
+        <p class="section-sub" style="margin-bottom:40px">ไม่ต้องมีความรู้ด้านเทคนิค ติดตั้งง่าย ใช้งานได้ทันที</p>
+        <div class="steps">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-title">ติดต่อซื้อ & รับคีย์</div>
+              <div class="step-desc">ติดต่อทีมงานผ่าน Line หรือ Facebook ชำระเงินแล้วรับ License Key ทันที</div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-title">ดาวน์โหลด & ใส่คีย์</div>
+              <div class="step-desc">ติดตั้ง FIKTH PRO บน Windows 10/11 ใส่คีย์แล้วพร้อมใช้งานได้เลย</div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <div class="step-title">ตั้งค่า & ปล่อยงาน</div>
+              <div class="step-desc">กำหนดเป้าหมาย ตั้ง queue แล้วปิดทิ้งไว้ โปรแกรมทำงานแทน 24 ชม.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="how-visual">
+        <div class="terminal-bar">
+          <div class="t-dot" style="background:#f87171"></div>
+          <div class="t-dot" style="background:#fbbf24"></div>
+          <div class="t-dot" style="background:#00e5a0"></div>
+          <span style="font-size:11px;color:var(--muted);margin-left:8px">Task Queue</span>
+        </div>
+        <div class="terminal-body">
+          <div class="t-line">
+            <div class="t-icon">📘</div>
+            <div class="t-text" style="flex:1">
+              <div class="label">Facebook Comment</div>
+              <div class="t-bar-wrap"><div class="t-bar-fill" style="width:78%"></div></div>
+            </div>
+            <div class="t-status run">78%</div>
+          </div>
+          <div class="t-line">
+            <div class="t-icon">🎮</div>
+            <div class="t-text" style="flex:1">
+              <div class="label">Discord DM</div>
+              <div class="t-bar-wrap"><div class="t-bar-fill" style="width:100%"></div></div>
+            </div>
+            <div class="t-status run">เสร็จ</div>
+          </div>
+          <div class="t-line">
+            <div class="t-icon">📢</div>
+            <div class="t-text" style="flex:1">
+              <div class="label">Group Post × 12</div>
+              <div class="t-bar-wrap"><div class="t-bar-fill" style="width:33%"></div></div>
+            </div>
+            <div class="t-status run">4/12</div>
+          </div>
+          <div class="t-line">
+            <div class="t-icon">💬</div>
+            <div class="t-text" style="flex:1">
+              <div class="label">Line Chat Broadcast</div>
+              <div class="t-bar-wrap"><div class="t-bar-fill" style="width:0%"></div></div>
+            </div>
+            <div class="t-status idle">รอ</div>
+          </div>
+          <div style="margin-top:4px;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--muted)">
+            ✅ <span style="color:var(--accent)">1,240</span> actions วันนี้ &nbsp;|&nbsp; ⏱ ทำงานมา <span style="color:var(--text)">6ชม. 14น.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ④ PRICING -->
+<section class="section" id="pricing">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:52px">
+      <div class="section-eyebrow">ราคา</div>
+      <div class="section-h">เลือกแพ็กเกจที่เหมาะกับคุณ</div>
+      <p class="section-sub" style="margin:0 auto;text-align:center">สอบถามราคาได้ที่ Discord หรือ Line ของเรา มีโปรโมชั่นประจำเดือน</p>
+    </div>
+    <div class="price-grid">
+      <div class="price-card">
+        <div class="p-plan">รายเดือน</div>
+        <div class="p-dur">30 วัน</div>
+        <div class="p-note">เหมาะสำหรับทดลองใช้</div>
+        <ul class="p-list">
+          <li>ฟีเจอร์ครบทุกอย่าง</li>
+          <li>อัปเดตฟรีตลอดอายุ</li>
+          <li>Windows 10/11</li>
+          <li>Support ทีมงาน</li>
+        </ul>
+        <a href="#contact" class="p-btn p-btn-outline">สอบถามราคา</a>
+      </div>
+      <div class="price-card featured">
+        <div class="pop-tag">⚡ ยอดนิยม</div>
+        <div class="p-plan">รายไตรมาส</div>
+        <div class="p-dur">90 วัน</div>
+        <div class="p-note">คุ้มค่าที่สุด ประหยัดกว่ารายเดือน</div>
+        <ul class="p-list">
+          <li>ฟีเจอร์ครบทุกอย่าง</li>
+          <li>อัปเดตฟรีตลอดอายุ</li>
+          <li>Windows 10/11</li>
+          <li>Support ทีมงาน</li>
+          <li>ราคาพิเศษกว่ารายเดือน</li>
+        </ul>
+        <a href="#contact" class="p-btn p-btn-fill">สอบถามราคา →</a>
+      </div>
+      <div class="price-card">
+        <div class="p-plan">ตลอดชีพ</div>
+        <div class="p-dur">Lifetime</div>
+        <div class="p-note">จ่ายครั้งเดียว ใช้ได้ตลอด</div>
+        <ul class="p-list">
+          <li>ฟีเจอร์ครบทุกอย่าง</li>
+          <li>อัปเดตฟรีตลอดชีพ</li>
+          <li>Windows 10/11</li>
+          <li>Support ทีมงาน</li>
+          <li>ไม่มีค่าใช้จ่ายเพิ่ม</li>
+        </ul>
+        <a href="#contact" class="p-btn p-btn-outline">สอบถามราคา</a>
+      </div>
+    </div>
+    <p style="text-align:center;color:var(--muted);font-size:13px;margin-top:20px">
+      ดูโปรโมชั่นพิเศษได้ที่ <a href="https://discord.gg/rhDzTdNpr" target="_blank" style="color:var(--accent);text-decoration:none">Discord Server</a> ของเรา
     </p>
-    <div class="hero-btns">
-      <a href="#contact" class="btn-hero btn-primary-hero">💬 สั่งซื้อเลย</a>
-      <a href="#features" class="btn-hero btn-outline-hero">ดูฟีเจอร์</a>
-    </div>
-    <div class="hero-stats">
-      <div class="hero-stat">
-        <div class="num">4</div>
-        <div class="lbl">แพลตฟอร์ม</div>
-      </div>
-      <div class="hero-stat">
-        <div class="num">24/7</div>
-        <div class="lbl">ทำงานตลอด</div>
-      </div>
-      <div class="hero-stat">
-        <div class="num">v4.4</div>
-        <div class="lbl">เวอร์ชันล่าสุด</div>
-      </div>
-    </div>
   </div>
-</div>
+</section>
 
-<!-- FEATURES -->
-<hr class="section-divider">
-<section id="features">
-  <div class="section-label">ฟีเจอร์</div>
-  <div class="section-title">ครบทุกแพลตฟอร์ม<br>ในโปรแกรมเดียว</div>
-  <p class="section-sub">ไม่ต้องเปิดหลายแท็บ ไม่ต้องนั่งพิมพ์เอง ปล่อยให้ FIKTH PRO ทำงานแทน</p>
-  <div class="features-grid">
-    <div class="feature-card">
-      <div class="feature-icon">📘</div>
-      <div class="feature-title">Facebook Automation</div>
-      <div class="feature-desc">คอมเมนต์อัตโนมัติ, โพสต์กลุ่ม, ส่งข้อความ, เข้ากลุ่มเป้าหมาย ทำได้ทุกอย่างโดยไม่ต้องแตะเมาส์</div>
-      <div class="feature-tags">
-        <span class="tag">Comment</span>
-        <span class="tag">Post</span>
-        <span class="tag">Group</span>
-        <span class="tag">Chat</span>
-      </div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">🎮</div>
-      <div class="feature-title">Discord Automation</div>
-      <div class="feature-desc">ส่งข้อความใน Server, DM หาสมาชิก, เพิ่มเพื่อน — เหมาะสำหรับหาลูกค้าในชุมชน Discord</div>
-      <div class="feature-tags">
-        <span class="tag">Message</span>
-        <span class="tag">DM</span>
-        <span class="tag">Friend Add</span>
-      </div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">💬</div>
-      <div class="feature-title">Line & TikTok</div>
-      <div class="feature-desc">Panel ควบคุม Line และ TikTok Chat ในหน้าต่างเดียว สะดวก ไม่ต้องสลับหน้าต่างให้เสียเวลา</div>
-      <div class="feature-tags">
-        <span class="tag">Line Chat</span>
-        <span class="tag">TikTok</span>
-      </div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">🎯</div>
-      <div class="feature-title">Target Queue</div>
-      <div class="feature-desc">วางคิวเป้าหมายได้ไม่จำกัด โปรแกรมทำงานตามลำดับ ติดตามสถานะแต่ละรายการได้แบบ real-time</div>
-      <div class="feature-tags">
-        <span class="tag">Queue</span>
-        <span class="tag">Auto</span>
-        <span class="tag">Tracking</span>
-      </div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">📊</div>
-      <div class="feature-title">Dashboard & Log</div>
-      <div class="feature-desc">ดูสถิติการทำงาน, ประวัติ, Log ประจำวัน ครบทุกอย่างในหน้าเดียว วิเคราะห์ผลได้ทันที</div>
-      <div class="feature-tags">
-        <span class="tag">Stats</span>
-        <span class="tag">History</span>
-        <span class="tag">Log</span>
-      </div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">🔄</div>
-      <div class="feature-title">อัปเดตอัตโนมัติ</div>
-      <div class="feature-desc">โปรแกรมอัปเดตเองทุกครั้งที่มีเวอร์ชันใหม่ ไม่ต้องลงใหม่ ไม่เสียสิทธิ์ใช้งาน</div>
-      <div class="feature-tags">
-        <span class="tag">Auto Update</span>
-        <span class="tag">ไม่ขาดตอน</span>
+<!-- ⑤ KEY CHECK -->
+<section class="section" id="keycheck">
+  <div class="container">
+    <div class="keycheck-inner">
+      <div class="section-eyebrow">ตรวจสอบคีย์</div>
+      <div class="section-h">เช็คสถานะ<br>License ของคุณ</div>
+      <p class="section-sub">ใส่ License Key เพื่อดูสถานะ วันหมดอายุ และประเภทคีย์</p>
+      <div class="key-form">
+        <div class="key-input-wrap">
+          <input class="key-input" id="key-input" type="text" placeholder="FIKTH-XXXX-XXXXXXXX-XXXXXXXX" maxlength="40" autocomplete="off" spellcheck="false">
+        </div>
+        <button class="key-submit" id="key-submit" onclick="checkKey()">ตรวจสอบคีย์</button>
+        <div class="key-result" id="key-result"></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
-<hr class="section-divider">
-<div class="how-wrap">
-  <section id="how" style="max-width:1100px;margin:0 auto">
-    <div class="section-label">วิธีใช้งาน</div>
-    <div class="section-title">เริ่มใช้งานได้ใน 3 ขั้นตอน</div>
-    <p class="section-sub">ไม่ต้องมีความรู้ด้านเทคนิค ติดตั้งง่าย ใช้ได้ทันที</p>
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-title">สั่งซื้อ & รับคีย์</div>
-        <div class="step-desc">ติดต่อทีมงานผ่าน Line, Facebook หรือ Discord ชำระเงินแล้วรับ License Key ทันที</div>
+<!-- ⑥ CONTACT -->
+<section class="section" id="contact">
+  <div class="container">
+    <div class="contact-inner">
+      <div>
+        <div class="section-eyebrow">ติดต่อ</div>
+        <div class="section-h">พร้อมตอบทุกคำถาม ไม่มีขั้นต่ำ</div>
+        <p class="section-sub" style="margin-bottom:0">ทีมงานออนไลน์ทุกวัน ติดต่อผ่านช่องทางที่สะดวกได้เลย</p>
       </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-title">ดาวน์โหลด & ติดตั้ง</div>
-        <div class="step-desc">ดาวน์โหลด FIKTH PRO ติดตั้งบน Windows 10/11 ใส่คีย์ แล้วก็พร้อมใช้งานได้เลย</div>
+      <div class="contact-cards">
+        <a href="https://line.me/R/ti/p/@268wwkan" target="_blank" class="cc line">
+          <div class="cc-icon">💚</div>
+          <div>
+            <div class="cc-name">Line OA</div>
+            <div class="cc-handle">@268wwkan</div>
+          </div>
+          <div class="cc-arrow">→</div>
+        </a>
+        <a href="https://www.facebook.com/share/1FEQgvYnqC/" target="_blank" class="cc fb">
+          <div class="cc-icon">💙</div>
+          <div>
+            <div class="cc-name">Facebook Page</div>
+            <div class="cc-handle">FIKTH PRO Official</div>
+          </div>
+          <div class="cc-arrow">→</div>
+        </a>
+        <a href="https://discord.gg/rhDzTdNpr" target="_blank" class="cc dc">
+          <div class="cc-icon">💜</div>
+          <div>
+            <div class="cc-name">Discord Server</div>
+            <div class="cc-handle">discord.gg/rhDzTdNpr</div>
+          </div>
+          <div class="cc-arrow">→</div>
+        </a>
       </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-title">ตั้งค่า & ปล่อยงาน</div>
-        <div class="step-desc">กำหนดเป้าหมาย ตั้ง queue แล้วปิดทิ้งไว้ โปรแกรมทำงานแทนคุณตลอด 24 ชั่วโมง</div>
-      </div>
-    </div>
-  </section>
-</div>
-
-<!-- PRICING -->
-<hr class="section-divider">
-<section id="pricing">
-  <div style="text-align:center">
-    <div class="section-label" style="display:inline-block">ราคา</div>
-    <div class="section-title">เลือกแพ็กเกจที่เหมาะกับคุณ</div>
-    <p class="section-sub" style="margin:0 auto">สอบถามราคาและโปรโมชั่นพิเศษได้ที่ช่องทางด้านล่าง</p>
-  </div>
-  <div class="pricing-grid">
-    <div class="price-card">
-      <div class="price-plan">รายเดือน</div>
-      <div class="price-duration">30 วัน</div>
-      <div class="price-note">เหมาะสำหรับทดลองใช้</div>
-      <ul class="price-features">
-        <li>ฟีเจอร์ครบทุกอย่าง</li>
-        <li>อัปเดตฟรีตลอดอายุ</li>
-        <li>รองรับ Windows 10/11</li>
-        <li>Support ทีมงาน</li>
-      </ul>
-      <a href="#contact" class="btn-buy btn-buy-outline">สอบถามราคา</a>
-    </div>
-    <div class="price-card popular">
-      <div class="popular-badge">⚡ ยอดนิยม</div>
-      <div class="price-plan">รายไตรมาส</div>
-      <div class="price-duration">90 วัน</div>
-      <div class="price-note">คุ้มค่าที่สุด</div>
-      <ul class="price-features">
-        <li>ฟีเจอร์ครบทุกอย่าง</li>
-        <li>อัปเดตฟรีตลอดอายุ</li>
-        <li>รองรับ Windows 10/11</li>
-        <li>Support ทีมงาน</li>
-        <li>ประหยัดกว่ารายเดือน</li>
-      </ul>
-      <a href="#contact" class="btn-buy btn-buy-solid">สอบถามราคา →</a>
-    </div>
-    <div class="price-card">
-      <div class="price-plan">ถาวร</div>
-      <div class="price-duration">Lifetime</div>
-      <div class="price-note">จ่ายครั้งเดียว ใช้ได้ตลอด</div>
-      <ul class="price-features">
-        <li>ฟีเจอร์ครบทุกอย่าง</li>
-        <li>อัปเดตฟรีตลอดชีพ</li>
-        <li>รองรับ Windows 10/11</li>
-        <li>Support ทีมงาน</li>
-        <li>ไม่มีค่าใช้จ่ายเพิ่ม</li>
-      </ul>
-      <a href="#contact" class="btn-buy btn-buy-outline">สอบถามราคา</a>
     </div>
   </div>
-  <p class="pricing-note">
-    📌 ราคาและโปรโมชั่นพิเศษ ดูได้ที่ <a href="https://discord.gg/rhDzTdNpr" target="_blank">Discord Server</a> ของเรา
-  </p>
 </section>
-
-<!-- CONTACT -->
-<hr class="section-divider">
-<div class="contact-wrap">
-  <section id="contact" style="max-width:1100px;margin:0 auto">
-    <div class="section-label">ติดต่อ</div>
-    <div class="section-title">พร้อมช่วยคุณ<br>ทุกช่องทาง</div>
-    <p class="section-sub">ทีมงานพร้อมตอบทุกคำถาม สั่งซื้อได้เลย ไม่มีขั้นต่ำ</p>
-    <div class="contact-grid">
-      <a href="https://line.me/R/ti/p/@268wwkan" target="_blank" class="contact-card line">
-        <div class="contact-icon">
-          <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-            <rect width="40" height="40" rx="10" fill="#00B900"/>
-            <path d="M32 18.5c0-6.35-6.37-11.5-14-11.5S4 12.15 4 18.5c0 5.69 5.04 10.44 11.85 11.34.46.1 1.09.3 1.25.7.14.36.09.93.04 1.3l-.2 1.2c-.06.36-.28 1.42 1.24.77s8.22-4.84 11.22-8.29c2.06-2.27 3.6-4.98 3.6-7.02z" fill="white"/>
-            <path d="M26.5 21.5h-3.8a.3.3 0 01-.3-.3v-5.9c0-.17.13-.3.3-.3h3.8c.17 0 .3.13.3.3v.96c0 .17-.13.3-.3.3h-2.54v.96h2.54c.17 0 .3.13.3.3v.96c0 .17-.13.3-.3.3h-2.54v.96h2.54c.17 0 .3.13.3.3v.96c0 .17-.13.3-.3.3zm-5.5 0h-.96a.3.3 0 01-.3-.3v-5.9c0-.17.13-.3.3-.3h.96c.17 0 .3.13.3.3v5.9c0 .17-.13.3-.3.3zm-2.1 0h-3.8a.3.3 0 01-.3-.3v-5.9c0-.17.13-.3.3-.3h.96c.17 0 .3.13.3.3v4.64h2.54c.17 0 .3.13.3.3v.96c0 .17-.13.3-.3.3zm-5.5-3.04h-2.54v-2.86h2.54c.17 0 .3-.13.3-.3v-.96c0-.17-.13-.3-.3-.3h-3.8a.3.3 0 00-.3.3v5.9c0 .17.13.3.3.3h3.8c.17 0 .3-.13.3-.3v-.96c0-.17-.13-.3-.3-.3h-2.54v-.96h2.54c.17 0 .3-.13.3-.3v-.96c0-.17-.13-.3-.3-.3z" fill="#00B900"/>
-          </svg>
-        </div>
-        <div>
-          <div class="contact-name">Line OA</div>
-          <div class="contact-handle">@268wwkan</div>
-        </div>
-      </a>
-      <a href="https://www.facebook.com/share/1FEQgvYnqC/" target="_blank" class="contact-card fb">
-        <div class="contact-icon">
-          <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-            <rect width="40" height="40" rx="10" fill="#1877F2"/>
-            <path d="M27 20h-4v12h-5V20h-3v-5h3v-3c0-3.3 2-5 5-5 1.4 0 2.9.3 2.9.3V12h-1.6c-1.6 0-2.1.9-2.1 2v2h3.6l-.6 5z" fill="white"/>
-          </svg>
-        </div>
-        <div>
-          <div class="contact-name">Facebook Page</div>
-          <div class="contact-handle">FIKTH PRO Official</div>
-        </div>
-      </a>
-      <a href="https://discord.gg/rhDzTdNpr" target="_blank" class="contact-card dc">
-        <div class="contact-icon">
-          <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-            <rect width="40" height="40" rx="10" fill="#5865F2"/>
-            <path d="M29.5 11.5A25.5 25.5 0 0023 9.7a.1.1 0 00-.1.05 17.7 17.7 0 00-.78 1.6 23.5 23.5 0 00-7 0 16.2 16.2 0 00-.8-1.6.1.1 0 00-.1-.05 25.4 25.4 0 00-6.5 1.8.09.09 0 00-.04.04C4.72 17.5 3.8 23.3 4.24 29.06a.11.11 0 00.04.07 25.6 25.6 0 007.7 3.9.1.1 0 00.11-.04 18.3 18.3 0 001.58-2.58.1.1 0 00-.06-.14 16.9 16.9 0 01-2.4-1.15.1.1 0 010-.17c.16-.12.32-.24.47-.37a.1.1 0 01.1-.01c5.03 2.3 10.48 2.3 15.45 0a.1.1 0 01.11.01c.15.13.31.25.47.37a.1.1 0 010 .17 15.7 15.7 0 01-2.4 1.15.1.1 0 00-.05.14 20.6 20.6 0 001.58 2.58.1.1 0 00.1.04 25.5 25.5 0 007.7-3.9.1.1 0 00.04-.07c.52-6.55-.88-12.24-3.7-17.52a.08.08 0 00-.04-.04zM15.2 25.5c-1.5 0-2.76-1.39-2.76-3.1s1.23-3.1 2.76-3.1c1.54 0 2.79 1.4 2.76 3.1 0 1.71-1.23 3.1-2.76 3.1zm10.2 0c-1.51 0-2.76-1.39-2.76-3.1s1.23-3.1 2.76-3.1c1.54 0 2.78 1.4 2.76 3.1 0 1.71-1.22 3.1-2.76 3.1z" fill="white"/>
-          </svg>
-        </div>
-        <div>
-          <div class="contact-name">Discord Server</div>
-          <div class="contact-handle">discord.gg/rhDzTdNpr</div>
-        </div>
-      </a>
-    </div>
-  </section>
-</div>
-
-<!-- CTA -->
-<div class="cta-section">
-  <h2>พร้อมเริ่มปั้มยอดแล้วหรือยัง?</h2>
-  <p>ติดต่อทีมงานได้เลย ไม่มีค่าใช้จ่ายในการสอบถาม</p>
-  <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
-    <a href="https://line.me/R/ti/p/@268wwkan" target="_blank" class="btn-hero btn-primary-hero" style="background:#00b900">💬 Line OA</a>
-    <a href="https://discord.gg/rhDzTdNpr" target="_blank" class="btn-hero btn-outline-hero">🎮 Discord</a>
-  </div>
-</div>
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-brand">FIKTH</div>
-  <div class="footer-text">© 2026 FIKTH PRO. All rights reserved.</div>
-  <div class="footer-links">
+  <div class="f-logo">FIKTH</div>
+  <div class="f-copy">© 2026 FIKTH PRO</div>
+  <div class="f-links">
     <a href="https://discord.gg/rhDzTdNpr" target="_blank">Discord</a>
     <a href="https://www.facebook.com/share/1FEQgvYnqC/" target="_blank">Facebook</a>
     <a href="https://line.me/R/ti/p/@268wwkan" target="_blank">Line</a>
   </div>
 </footer>
 
+<script>
+async function checkKey() {
+  const input = document.getElementById('key-input');
+  const btn   = document.getElementById('key-submit');
+  const result = document.getElementById('key-result');
+  const key = input.value.trim().toUpperCase();
+  if (!key) return;
+
+  btn.disabled = true;
+  btn.textContent = 'กำลังตรวจสอบ...';
+  result.style.display = 'none';
+
+  try {
+    const r = await fetch('https://license.fikth.online/x/k?a=' + encodeURIComponent(key));
+    const data = await r.json();
+
+    if (!data.found) {
+      result.className = 'key-result err';
+      result.innerHTML = '<div style="color:#f87171;font-weight:600">❌ ไม่พบคีย์นี้ในระบบ</div>';
+      result.style.display = 'block';
+      return;
+    }
+
+    const statusMap = { active: ['✅ ใช้งานได้', 'green'], banned: ['🚫 ถูกระงับ', 'red'], expired: ['⏰ หมดอายุ', 'yellow'] };
+    const [statusText, statusColor] = statusMap[data.status] || ['—', ''];
+    const expiryText = data.permanent ? '<span class="kr-val green">ถาวร (ไม่หมดอายุ)</span>' :
+      data.days_left > 0 ? `<span class="kr-val ${data.days_left <= 7 ? 'yellow' : 'green'}">อีก ${data.days_left} วัน</span>` :
+      '<span class="kr-val red">หมดอายุแล้ว</span>';
+    const typeMap = { 'ลูกค้า': 'ลูกค้าทั่วไป', 'พาทเนอร์': 'พาทเนอร์', 'แอดมิน': 'แอดมิน' };
+
+    result.className = 'key-result ok';
+    result.innerHTML = `
+      <div class="kr-row"><span class="kr-label">สถานะ</span><span class="kr-val ${statusColor}">${statusText}</span></div>
+      <div class="kr-row"><span class="kr-label">ประเภท</span><span class="kr-val">${typeMap[data.type] || data.type}</span></div>
+      <div class="kr-row"><span class="kr-label">วันหมดอายุ</span>${expiryText}</div>
+    `;
+    result.style.display = 'block';
+  } catch(e) {
+    result.className = 'key-result err';
+    result.innerHTML = '<div style="color:#f87171;font-weight:600">❌ เชื่อมต่อ server ไม่ได้</div>';
+    result.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'ตรวจสอบคีย์';
+  }
+}
+
+document.getElementById('key-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') checkKey();
+});
+</script>
 </body>
 </html>
