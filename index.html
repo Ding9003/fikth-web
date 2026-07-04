@@ -3,681 +3,406 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FIKTH PRO — ปั้มยอด ไม่ต้องนั่งเฝ้า</title>
+<title>FIKTH PRO — ระบบออโต้ที่ทำได้จริง</title>
 <meta name="description" content="โปรแกรม Automation Facebook, Discord, Line สำหรับธุรกิจออนไลน์ไทย">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:#0b0d12;color:#e7ebf2;font-family:'IBM Plex Sans Thai',system-ui,sans-serif;font-size:15px;-webkit-font-smoothing:antialiased}
+:root{--bg:#0b0d12;--bg2:#12151b;--bg3:#171b23;--border:#232a35;--text:#e7ebf2;--muted:#8a94a6;--accent:#34d399;--accent-txt:#052e22;--r:12px}
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* TOPBAR */
+#topbar{position:fixed;top:0;left:0;right:0;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(11,13,18,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);z-index:100}
+.logo{font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:4px;color:var(--accent);font-size:19px;cursor:pointer}
+#menu-btn{background:transparent;border:1px solid var(--border);color:var(--text);width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+#menu-btn:hover{border-color:var(--accent);color:var(--accent)}
 
-:root {
-  --bg:      #070709;
-  --bg2:     #0e0e14;
-  --bg3:     #17171f;
-  --border:  #1e1e2a;
-  --border2: #2a2a3a;
-  --text:    #e2e4ed;
-  --muted:   #6b7280;
-  --accent:  #00e5a0;
-  --accent-d:#00b87a;
-  --glow:    rgba(0,229,160,0.15);
-  --r: 14px;
-}
+/* MAIN */
+#main{position:fixed;inset:60px 0 0 0;overflow-y:auto;padding:44px 52px 80px}
+#main::-webkit-scrollbar{width:6px}
+#main::-webkit-scrollbar-thumb{background:#232a35;border-radius:3px}
 
-html { scroll-behavior: smooth; }
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-  font-size: 15px;
-  line-height: 1.6;
-  overflow-x: hidden;
-}
+/* DRAWER OVERLAY */
+#overlay{position:fixed;inset:0;background:rgba(3,5,8,.6);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s}
+#overlay.show{opacity:1;pointer-events:all}
 
-/* ── NAV ─────────────────────────────────────────────────── */
-nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-  padding: 0 40px;
-  height: 58px;
-  display: flex; align-items: center; justify-content: space-between;
-  background: rgba(7,7,9,0.7);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
-}
-.logo { font-size: 18px; font-weight: 900; letter-spacing: 4px; color: var(--accent); }
-.nav-r { display: flex; align-items: center; gap: 8px; }
-.nav-link {
-  color: var(--muted); font-size: 13px; text-decoration: none;
-  padding: 6px 14px; border-radius: 8px; transition: color .2s;
-}
-.nav-link:hover { color: var(--text); }
-.nav-btn {
-  background: var(--accent); color: #000;
-  font-size: 13px; font-weight: 700;
-  padding: 7px 18px; border-radius: 8px;
-  text-decoration: none; transition: opacity .2s;
-}
-.nav-btn:hover { opacity: .85; }
+/* DRAWER */
+#drawer{position:fixed;top:0;right:0;height:100%;width:280px;background:var(--bg2);border-left:1px solid var(--border);z-index:201;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;padding:20px 16px}
+#drawer.open{transform:translateX(0)}
+.drawer-top{display:flex;align-items:center;justify-content:space-between;padding:0 6px;margin-bottom:18px}
+.drawer-label{font-size:11px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase}
+.close-btn{background:transparent;border:none;color:var(--muted);cursor:pointer;padding:4px;display:flex;border-radius:7px}
+.close-btn:hover{background:var(--bg3);color:var(--text)}
+.nav-item{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:10px;cursor:pointer;font-size:14px;font-weight:500;margin-bottom:2px;transition:all .15s;border:none;background:transparent;color:var(--muted);width:100%;text-align:left}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{background:rgba(52,211,153,.1);color:var(--accent);font-weight:600}
+.nav-item svg{flex-shrink:0}
+.drawer-footer{margin-top:auto;padding-top:16px}
+.btn-buy{width:100%;background:var(--accent);color:var(--accent-txt);border:none;font-family:inherit;font-weight:700;font-size:14px;padding:12px;border-radius:10px;cursor:pointer;transition:opacity .15s}
+.btn-buy:hover{opacity:.85}
 
-/* ── SECTIONS ─────────────────────────────────────────────── */
-.section {
-  min-height: 100vh;
-  display: flex; align-items: center;
-  padding: 100px 40px 80px;
-  border-bottom: 1px solid var(--border);
-}
-.container { max-width: 1080px; width: 100%; margin: 0 auto; }
+/* VIEWS */
+.view{display:none;animation:fadeUp .35s ease both}
+.view.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
-/* ── HERO ─────────────────────────────────────────────────── */
-#hero {
-  background:
-    radial-gradient(ellipse 80% 60% at 60% 40%, rgba(0,229,160,0.04) 0%, transparent 70%),
-    var(--bg);
-}
-.hero-grid {
-  display: grid;
-  grid-template-columns: 1fr 420px;
-  gap: 60px; align-items: center;
-}
-.hero-tag {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: rgba(0,229,160,0.08); border: 1px solid rgba(0,229,160,0.2);
-  color: var(--accent); font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
-  text-transform: uppercase; padding: 5px 14px; border-radius: 100px;
-  margin-bottom: 28px;
-}
-.hero-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: block; animation: pulse 2s infinite; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+/* HERO */
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.25);color:var(--accent);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:6px 14px;border-radius:100px;margin-bottom:22px}
+.hero-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+h1{font-size:clamp(36px,5vw,56px);line-height:1.1;font-weight:700;letter-spacing:-1.5px;margin-bottom:18px;max-width:640px}
+h1 span{color:var(--accent)}
+.hero-sub{color:var(--muted);font-size:16px;line-height:1.75;max-width:500px;margin-bottom:28px}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:32px}
+.btn-main{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:var(--accent-txt);border:none;font-family:inherit;font-size:14px;font-weight:700;padding:12px 24px;border-radius:10px;cursor:pointer;transition:all .15s;text-decoration:none}
+.btn-main:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(52,211,153,.25)}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;background:var(--bg2);color:var(--text);border:1px solid var(--border);font-family:inherit;font-size:14px;font-weight:600;padding:12px 22px;border-radius:10px;cursor:pointer;transition:all .15s;text-decoration:none}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.hero-trust{display:flex;gap:22px;flex-wrap:wrap}
+.trust-item{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:13px}
+.trust-item svg{color:var(--accent)}
 
-h1 {
-  font-size: clamp(38px, 5.5vw, 64px);
-  font-weight: 900; line-height: 1.05;
-  letter-spacing: -2px; margin-bottom: 22px;
-}
-.g { background: linear-gradient(120deg, var(--accent) 0%, #4fa3ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-.hero-desc { color: var(--muted); font-size: 16px; line-height: 1.75; max-width: 440px; margin-bottom: 36px; }
-.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
-.btn-main {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: var(--accent); color: #000;
-  font-size: 14px; font-weight: 700;
-  padding: 12px 26px; border-radius: 10px;
-  text-decoration: none; transition: all .2s;
-}
-.btn-main:hover { transform: translateY(-2px); box-shadow: 0 10px 40px var(--glow); }
-.btn-ghost {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: var(--bg3); color: var(--text);
-  border: 1px solid var(--border2);
-  font-size: 14px; font-weight: 600;
-  padding: 12px 26px; border-radius: 10px;
-  text-decoration: none; transition: all .2s;
-}
-.btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+/* HERO CARD */
+.hero-card{margin-top:32px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:18px 20px;max-width:560px}
+.hc-stats{display:flex;gap:10px;margin-bottom:16px}
+.hc-stat{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.hc-stat .v{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700}
+.hc-stat .l{font-size:11px;color:var(--muted);margin-top:2px}
+.hc-stat.green .v{color:var(--accent)}
+.hc-stat.blue .v{color:#6ea8fe}
+.hc-stat.white .v{color:var(--text)}
+.hc-task{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--border)}
+.hc-task:first-of-type{border-top:none}
+.hc-task-name{width:150px;font-size:13px;flex-shrink:0}
+.hc-bar{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.hc-fill{height:100%;border-radius:3px}
+.hc-pct{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;width:40px;text-align:right}
 
-/* HERO CARD (right side) */
-.hero-card {
-  background: var(--bg2);
-  border: 1px solid var(--border2);
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow: 0 40px 80px rgba(0,0,0,0.5);
-}
-.hc-bar {
-  background: var(--bg3); padding: 12px 16px;
-  display: flex; align-items: center; gap: 8px;
-  border-bottom: 1px solid var(--border);
-}
-.hc-dot { width: 10px; height: 10px; border-radius: 50%; }
-.hc-body { padding: 20px; }
-.hc-stat-row { display: flex; gap: 10px; margin-bottom: 12px; }
-.hc-stat {
-  flex: 1; background: var(--bg3); border: 1px solid var(--border);
-  border-radius: 10px; padding: 14px 16px;
-}
-.hc-stat .v { font-size: 22px; font-weight: 800; }
-.hc-stat .l { font-size: 11px; color: var(--muted); margin-top: 2px; }
-.hc-stat.green .v { color: var(--accent); }
-.hc-stat.blue .v { color: #4fa3ff; }
-.hc-stat.red .v { color: #f87171; }
-.hc-list { display: flex; flex-direction: column; gap: 8px; }
-.hc-item {
-  background: var(--bg3); border: 1px solid var(--border);
-  border-radius: 8px; padding: 10px 14px;
-  display: flex; align-items: center; justify-content: space-between;
-}
-.hc-key { font-family: monospace; font-size: 11px; color: #4fa3ff; }
-.hc-badge {
-  font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px;
-}
-.hc-badge.ok { background: rgba(0,229,160,.12); color: var(--accent); }
-.hc-badge.warn { background: rgba(251,191,36,.12); color: #fbbf24; }
+/* SECTION HEADERS */
+.sec-label{color:var(--accent);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+.sec-h{font-size:clamp(26px,3.5vw,36px);font-weight:700;letter-spacing:-.5px;margin-bottom:8px}
+.sec-sub{color:var(--muted);font-size:14px;line-height:1.7;margin-bottom:28px;max-width:480px}
 
-/* ── FEATURES ─────────────────────────────────────────────── */
-#features { background: var(--bg2); }
-.section-eyebrow { color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 14px; }
-.section-h { font-size: clamp(28px, 4vw, 44px); font-weight: 800; letter-spacing: -1px; line-height: 1.15; margin-bottom: 14px; }
-.section-sub { color: var(--muted); font-size: 15px; max-width: 480px; line-height: 1.7; margin-bottom: 52px; }
+/* FEATURES GRID */
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.feat-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:22px;transition:border-color .2s}
+.feat-card:hover{border-color:rgba(52,211,153,.35)}
+.feat-ico{width:42px;height:42px;border-radius:10px;background:rgba(52,211,153,.1);color:var(--accent);display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.feat-name{font-size:15px;font-weight:600;margin-bottom:6px}
+.feat-desc{font-size:13px;color:var(--muted);line-height:1.65}
 
-.feat-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  background: var(--border);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  overflow: hidden;
-}
-.feat-item {
-  background: var(--bg2); padding: 32px 28px;
-  transition: background .2s;
-}
-.feat-item:hover { background: var(--bg3); }
-.feat-ico { font-size: 28px; margin-bottom: 14px; }
-.feat-name { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
-.feat-desc { font-size: 13px; color: var(--muted); line-height: 1.65; }
+/* PRICING */
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.price-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:26px 22px;position:relative}
+.price-card.featured{background:linear-gradient(155deg,rgba(52,211,153,.09) 0%,var(--bg2) 60%);border-color:rgba(52,211,153,.4)}
+.pop-tag{position:absolute;top:-11px;left:22px;background:var(--accent);color:var(--accent-txt);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 12px;border-radius:100px}
+.p-plan{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.p-dur{font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:700;letter-spacing:-.5px;margin-bottom:4px}
+.p-note{font-size:12px;color:var(--muted);margin-bottom:20px}
+.p-feats{list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:22px}
+.p-feats li{display:flex;gap:9px;font-size:13px;color:#c3cad6}
+.p-feats li::before{content:'✓';color:var(--accent);font-weight:700;flex-shrink:0}
+.p-btn{width:100%;border:none;font-family:inherit;font-weight:700;font-size:14px;padding:12px;border-radius:10px;cursor:pointer;transition:all .15s}
+.p-btn.outline{background:transparent;color:var(--text);border:1px solid var(--border)}
+.p-btn.outline:hover{border-color:var(--accent);color:var(--accent)}
+.p-btn.solid{background:var(--accent);color:var(--accent-txt)}
+.p-btn.solid:hover{opacity:.85}
 
-/* ── HOW ──────────────────────────────────────────────────── */
-#how { background: var(--bg); }
-.how-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
-.steps { display: flex; flex-direction: column; gap: 0; }
-.step-item {
-  display: flex; gap: 20px; padding: 24px 0;
-  border-bottom: 1px solid var(--border);
-  transition: all .2s; cursor: default;
-}
-.step-item:last-child { border-bottom: none; }
-.step-item:hover .step-num { background: var(--accent); color: #000; }
-.step-num {
-  width: 36px; height: 36px; border-radius: 50%;
-  border: 1px solid var(--border2); color: var(--muted);
-  font-size: 13px; font-weight: 700;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; transition: all .2s;
-}
-.step-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
-.step-desc { font-size: 13px; color: var(--muted); line-height: 1.65; }
+/* KEY CHECK */
+.key-wrap{max-width:440px}
+.key-form{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px}
+.key-input{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:14px;padding:13px 16px;border-radius:10px;outline:none;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;transition:border-color .15s}
+.key-input:focus{border-color:var(--accent)}
+.key-input::placeholder{text-transform:none;letter-spacing:0;font-family:'IBM Plex Sans Thai',sans-serif;color:var(--muted)}
+.key-submit{width:100%;background:var(--accent);color:var(--accent-txt);border:none;font-family:inherit;font-weight:700;font-size:14px;padding:13px;border-radius:10px;cursor:pointer;transition:opacity .15s}
+.key-submit:hover{opacity:.85}
+.key-submit:disabled{opacity:.5;cursor:not-allowed}
+.key-result{margin-top:14px;border-radius:10px;display:none;padding:4px 16px}
+.key-result.ok{background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.25)}
+.key-result.err{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);padding:14px 16px}
+.kr-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.kr-row:last-child{border-bottom:none}
+.kr-label{font-size:13px;color:var(--muted)}
+.kr-val{font-size:14px;font-weight:600}
 
-.how-visual {
-  background: var(--bg2); border: 1px solid var(--border2);
-  border-radius: 18px; padding: 28px;
-  box-shadow: 0 24px 60px rgba(0,0,0,0.4);
-}
-.terminal-bar {
-  display: flex; align-items: center; gap: 6px; margin-bottom: 20px;
-}
-.t-dot { width: 10px; height: 10px; border-radius: 50%; }
-.terminal-body { display: flex; flex-direction: column; gap: 10px; }
-.t-line {
-  display: flex; align-items: center; gap: 10px;
-  background: var(--bg3); border: 1px solid var(--border);
-  border-radius: 8px; padding: 10px 14px;
-}
-.t-icon { font-size: 16px; }
-.t-text { font-size: 12px; }
-.t-text .label { color: var(--muted); }
-.t-text .val { color: var(--text); font-weight: 600; }
-.t-bar-wrap { margin-top: 4px; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
-.t-bar-fill { height: 100%; border-radius: 2px; background: var(--accent); }
-.t-status { margin-left: auto; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
-.t-status.run { background: rgba(0,229,160,.12); color: var(--accent); }
-.t-status.idle { background: rgba(107,114,128,.12); color: var(--muted); }
+/* CONTACT */
+.contact-list{display:flex;flex-direction:column;gap:12px;max-width:520px}
+.cc{display:flex;align-items:center;gap:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px 18px;text-decoration:none;color:var(--text);transition:all .2s}
+.cc:hover{transform:translateX(5px)}
+.cc.line:hover{border-color:#06c755}
+.cc.fb:hover{border-color:#1877f2}
+.cc.dc:hover{border-color:#5865f2}
+.cc-ico{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:20px;color:#fff;flex-shrink:0}
+.cc-name{font-size:15px;font-weight:600}
+.cc-handle{font-size:12px;color:var(--muted);margin-top:2px;font-family:'JetBrains Mono',monospace}
+.cc-arrow{margin-left:auto;color:var(--muted);font-size:18px}
 
-/* ── PRICING ──────────────────────────────────────────────── */
-#pricing { background: var(--bg2); }
-.price-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 16px; margin-top: 0;
-}
-.price-card {
-  background: var(--bg3); border: 1px solid var(--border2);
-  border-radius: var(--r); padding: 32px; position: relative;
-  transition: border-color .2s;
-}
-.price-card:hover { border-color: var(--border2); }
-.price-card.featured {
-  background: linear-gradient(145deg, rgba(0,229,160,.07) 0%, var(--bg3) 60%);
-  border-color: rgba(0,229,160,.35);
-}
-.pop-tag {
-  position: absolute; top: -11px; left: 28px;
-  background: var(--accent); color: #000;
-  font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
-  padding: 3px 12px; border-radius: 100px;
-}
-.p-plan { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; }
-.p-dur { font-size: 34px; font-weight: 900; letter-spacing: -1px; margin-bottom: 4px; }
-.p-note { font-size: 12px; color: var(--muted); margin-bottom: 28px; }
-.p-list { list-style: none; display: flex; flex-direction: column; gap: 9px; margin-bottom: 28px; }
-.p-list li { font-size: 13px; color: var(--muted); display: flex; gap: 9px; align-items: flex-start; }
-.p-list li::before { content: '✓'; color: var(--accent); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
-.p-btn {
-  display: block; text-align: center; padding: 11px;
-  border-radius: 9px; font-size: 13px; font-weight: 700;
-  text-decoration: none; transition: all .2s;
-}
-.p-btn-outline { border: 1px solid var(--border2); color: var(--text); }
-.p-btn-outline:hover { border-color: var(--accent); color: var(--accent); }
-.p-btn-fill { background: var(--accent); color: #000; }
-.p-btn-fill:hover { opacity: .85; transform: translateY(-1px); }
-
-/* ── KEY CHECK (LOGIN) ────────────────────────────────────── */
-#keycheck {
-  background: var(--bg);
-  background-image: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0,229,160,0.04) 0%, transparent 70%);
-}
-.keycheck-inner { max-width: 520px; margin: 0 auto; text-align: center; }
-.keycheck-inner .section-h { margin-bottom: 10px; }
-.keycheck-inner .section-sub { margin: 0 auto 36px; text-align: center; }
-
-.key-form {
-  background: var(--bg2); border: 1px solid var(--border2);
-  border-radius: 16px; padding: 32px;
-}
-.key-input-wrap { position: relative; margin-bottom: 12px; }
-.key-input {
-  width: 100%; background: var(--bg3); border: 1px solid var(--border2);
-  color: var(--text); font-family: monospace; font-size: 14px;
-  padding: 13px 16px; border-radius: 10px;
-  outline: none; transition: border-color .2s; text-transform: uppercase;
-  letter-spacing: 1px;
-}
-.key-input::placeholder { color: var(--muted); text-transform: none; letter-spacing: 0; font-family: 'Inter', sans-serif; }
-.key-input:focus { border-color: var(--accent); }
-.key-submit {
-  width: 100%; background: var(--accent); color: #000;
-  border: none; padding: 13px; border-radius: 10px;
-  font-size: 14px; font-weight: 700; cursor: pointer;
-  transition: all .2s; letter-spacing: .3px;
-}
-.key-submit:hover { opacity: .85; }
-.key-submit:disabled { opacity: .5; cursor: not-allowed; }
-
-.key-result {
-  margin-top: 16px; padding: 16px 20px;
-  border-radius: 10px; display: none;
-  text-align: left;
-}
-.key-result.ok { background: rgba(0,229,160,.08); border: 1px solid rgba(0,229,160,.25); }
-.key-result.err { background: rgba(248,113,113,.08); border: 1px solid rgba(248,113,113,.25); }
-.kr-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,.05); }
-.kr-row:last-child { border-bottom: none; }
-.kr-label { font-size: 12px; color: var(--muted); }
-.kr-val { font-size: 13px; font-weight: 600; }
-.kr-val.green { color: var(--accent); }
-.kr-val.red { color: #f87171; }
-.kr-val.yellow { color: #fbbf24; }
-
-/* ── CONTACT ──────────────────────────────────────────────── */
-#contact { background: var(--bg2); }
-.contact-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
-.contact-cards { display: flex; flex-direction: column; gap: 12px; }
-.cc {
-  display: flex; align-items: center; gap: 16px;
-  background: var(--bg3); border: 1px solid var(--border2);
-  border-radius: 12px; padding: 18px 22px;
-  text-decoration: none; color: var(--text);
-  transition: all .25s;
-}
-.cc:hover { transform: translateX(6px); }
-.cc.line:hover { border-color: #00b900; }
-.cc.fb:hover { border-color: #1877f2; }
-.cc.dc:hover { border-color: #5865f2; }
-.cc-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
-.cc.line .cc-icon { background: rgba(0,185,0,.12); }
-.cc.fb .cc-icon { background: rgba(24,119,242,.12); }
-.cc.dc .cc-icon { background: rgba(88,101,242,.12); }
-.cc-name { font-size: 14px; font-weight: 700; }
-.cc-handle { font-size: 12px; color: var(--muted); margin-top: 2px; }
-.cc-arrow { margin-left: auto; color: var(--muted); font-size: 16px; }
-
-/* ── FOOTER ───────────────────────────────────────────────── */
-footer {
-  padding: 28px 40px;
-  display: flex; align-items: center; justify-content: space-between;
-  border-top: 1px solid var(--border);
-}
-.f-logo { font-size: 16px; font-weight: 900; letter-spacing: 3px; color: var(--accent); }
-.f-links { display: flex; gap: 20px; }
-.f-links a { color: var(--muted); text-decoration: none; font-size: 12px; transition: color .2s; }
-.f-links a:hover { color: var(--accent); }
-.f-copy { font-size: 12px; color: var(--muted); }
-
-/* ── RESPONSIVE ───────────────────────────────────────────── */
-@media (max-width: 900px) {
-  .hero-grid { grid-template-columns: 1fr; }
-  .hero-card { display: none; }
-  .feat-grid { grid-template-columns: 1fr 1fr; }
-  .how-grid { grid-template-columns: 1fr; }
-  .how-visual { display: none; }
-  .price-grid { grid-template-columns: 1fr; max-width: 380px; }
-  .contact-inner { grid-template-columns: 1fr; }
-  nav { padding: 0 20px; }
-  .section { padding: 90px 20px 60px; }
-  footer { flex-direction: column; gap: 12px; text-align: center; padding: 24px 20px; }
-}
-@media (max-width: 600px) {
-  .feat-grid { grid-template-columns: 1fr; }
-  h1 { letter-spacing: -1px; }
+@media(max-width:700px){
+  #main{padding:28px 20px 60px}
+  .feat-grid,.price-grid{grid-template-columns:1fr}
+  h1{letter-spacing:-.5px}
 }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
-  <div class="logo">FIKTH</div>
-  <div class="nav-r">
-    <a href="#features" class="nav-link">ฟีเจอร์</a>
-    <a href="#pricing" class="nav-link">ราคา</a>
-    <a href="#keycheck" class="nav-link">ตรวจสอบคีย์</a>
-    <a href="#contact" class="nav-btn">สั่งซื้อ →</a>
-  </div>
-</nav>
+<!-- TOPBAR -->
+<div id="topbar">
+  <div class="logo" onclick="go('home')">FIKTH</div>
+  <button id="menu-btn" onclick="toggleDrawer()" aria-label="เมนู">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+</div>
 
-<!-- ① HERO -->
-<section class="section" id="hero">
-  <div class="container">
-    <div class="hero-grid">
-      <div>
-        <div class="hero-tag">FIKTH PRO v4.4 — พร้อมใช้งาน</div>
-        <h1>ปั้มยอด<br><span class="g">อัตโนมัติ</span><br>ไม่ต้องนั่งเฝ้า</h1>
-        <p class="hero-desc">โปรแกรมจัดการ Facebook, Discord และ Line แทนคุณทุกวัน ตั้งครั้งเดียว ปล่อยให้มันทำงานเอง</p>
-        <div class="hero-actions">
-          <a href="#contact" class="btn-main">💬 สั่งซื้อเลย</a>
-          <a href="#features" class="btn-ghost">ดูฟีเจอร์ทั้งหมด</a>
-        </div>
+<!-- MAIN CONTENT -->
+<div id="main">
+
+  <!-- HOME -->
+  <div id="view-home" class="view active">
+    <div class="hero-badge">FIKTH PRO v4.4 — พร้อมใช้งาน</div>
+    <h1>ระบบอัตโนมัติ<br>ที่ทำงานแทนคุณ <span>24 ชั่วโมง</span></h1>
+    <p class="hero-sub">จัดการ Facebook, Discord และ Line ในที่เดียว ตั้งค่าครั้งเดียว แล้วปล่อยให้ระบบทำงานต่อเนื่อง</p>
+    <div class="hero-actions">
+      <button class="btn-main" onclick="go('contact')">เริ่มใช้งาน →</button>
+      <button class="btn-ghost" onclick="go('features')">ดูฟีเจอร์</button>
+    </div>
+    <div class="hero-trust">
+      <div class="trust-item">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v5.5c0 4-3 6.8-7 8-4-1.2-7-4-7-8V6z"/></svg>
+        อัปเดตฟรีตลอดอายุ
       </div>
-      <div class="hero-card">
-        <div class="hc-bar">
-          <div class="hc-dot" style="background:#f87171"></div>
-          <div class="hc-dot" style="background:#fbbf24"></div>
-          <div class="hc-dot" style="background:#00e5a0"></div>
-          <span style="font-size:11px;color:var(--muted);margin-left:8px">FIKTH PRO — Dashboard</span>
-        </div>
-        <div class="hc-body">
-          <div class="hc-stat-row">
-            <div class="hc-stat green"><div class="v">1,240</div><div class="l">คอมเมนต์วันนี้</div></div>
-            <div class="hc-stat blue"><div class="v">86</div><div class="l">กลุ่มเป้าหมาย</div></div>
-            <div class="hc-stat red"><div class="v">3</div><div class="l">คิวรอ</div></div>
-          </div>
-          <div class="hc-list">
-            <div class="hc-item">
-              <div>
-                <div style="font-size:12px;font-weight:600">Facebook Comment</div>
-                <div class="t-bar-wrap" style="width:160px;margin-top:6px"><div class="t-bar-fill" style="width:82%"></div></div>
-              </div>
-              <div class="hc-badge ok">กำลังทำงาน</div>
-            </div>
-            <div class="hc-item">
-              <div>
-                <div style="font-size:12px;font-weight:600">Discord DM</div>
-                <div class="t-bar-wrap" style="width:160px;margin-top:6px"><div class="t-bar-fill" style="width:55%;background:#4fa3ff"></div></div>
-              </div>
-              <div class="hc-badge ok" style="color:#4fa3ff;background:rgba(79,163,255,.12)">กำลังทำงาน</div>
-            </div>
-            <div class="hc-item">
-              <div style="font-size:12px;font-weight:600">Line Chat</div>
-              <div class="hc-badge warn">รอ</div>
-            </div>
-          </div>
-        </div>
+      <div class="trust-item">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v5.5c0 4-3 6.8-7 8-4-1.2-7-4-7-8V6z"/></svg>
+        รองรับ Windows 10/11
+      </div>
+      <div class="trust-item">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v5.5c0 4-3 6.8-7 8-4-1.2-7-4-7-8V6z"/></svg>
+        ทีมงานพร้อมช่วยเหลือ
+      </div>
+    </div>
+    <div class="hero-card">
+      <div class="hc-stats">
+        <div class="hc-stat green"><div class="v">1,240</div><div class="l">แอคชันวันนี้</div></div>
+        <div class="hc-stat blue"><div class="v">86</div><div class="l">กลุ่มเป้าหมาย</div></div>
+        <div class="hc-stat white"><div class="v">6:14</div><div class="l">เวลาทำงาน</div></div>
+      </div>
+      <div class="hc-task">
+        <div class="hc-task-name">Facebook Comment</div>
+        <div class="hc-bar"><div class="hc-fill" style="width:82%;background:#34d399"></div></div>
+        <div class="hc-pct" style="color:#34d399">82%</div>
+      </div>
+      <div class="hc-task">
+        <div class="hc-task-name">Discord DM</div>
+        <div class="hc-bar"><div class="hc-fill" style="width:55%;background:#6ea8fe"></div></div>
+        <div class="hc-pct" style="color:#6ea8fe">55%</div>
+      </div>
+      <div class="hc-task">
+        <div class="hc-task-name">Line Broadcast</div>
+        <div class="hc-bar"><div class="hc-fill" style="width:8%;background:#8a94a6"></div></div>
+        <div class="hc-pct" style="color:#8a94a6">รอ</div>
       </div>
     </div>
   </div>
-</section>
 
-<!-- ② FEATURES -->
-<section class="section" id="features">
-  <div class="container">
-    <div class="section-eyebrow">ฟีเจอร์</div>
-    <div class="section-h">ครบทุกอย่างในหน้าต่างเดียว</div>
-    <p class="section-sub">ไม่ต้องเปิดหลายแท็บ ไม่ต้องนั่งคอยดู</p>
+  <!-- FEATURES -->
+  <div id="view-features" class="view">
+    <div class="sec-label">ฟีเจอร์</div>
+    <div class="sec-h">ครบทุกอย่างในที่เดียว</div>
+    <p class="sec-sub">ไม่ต้องเปิดหลายแท็บ ไม่ต้องนั่งคอยดู ปล่อยให้ FIKTH PRO ทำงานแทน</p>
     <div class="feat-grid">
-      <div class="feat-item">
-        <div class="feat-ico">📘</div>
-        <div class="feat-name">Facebook Bot</div>
+      <div class="feat-card">
+        <div class="feat-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 12a8 8 0 0 1-11.5 7.2L4 20l.8-4.3A8 8 0 1 1 20 12z"/></svg></div>
+        <div class="feat-name">Facebook Automation</div>
         <div class="feat-desc">คอมเมนต์, โพสต์กลุ่ม, ส่งข้อความ, เข้ากลุ่มเป้าหมาย — อัตโนมัติทั้งหมด</div>
       </div>
-      <div class="feat-item">
-        <div class="feat-ico">🎮</div>
-        <div class="feat-name">Discord Bot</div>
+      <div class="feat-card">
+        <div class="feat-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 19v-1.5a3.5 3.5 0 0 0-3.5-3.5H7a3.5 3.5 0 0 0-3.5 3.5V19"/><circle cx="9.5" cy="8" r="3.5"/><path d="M20 19v-1.5A3.5 3.5 0 0 0 17.5 14"/><path d="M14 4.5a3.5 3.5 0 0 1 0 7"/></svg></div>
+        <div class="feat-name">Discord Automation</div>
         <div class="feat-desc">ส่งข้อความใน server, DM สมาชิก, เพิ่มเพื่อน — หาลูกค้าในชุมชน Discord</div>
       </div>
-      <div class="feat-item">
-        <div class="feat-ico">💬</div>
+      <div class="feat-card">
+        <div class="feat-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="7" y="3" width="10" height="18" rx="1"/><path d="M11 18h2"/></svg></div>
         <div class="feat-name">Line & TikTok</div>
         <div class="feat-desc">Panel ควบคุม Line และ TikTok รวมอยู่ในหน้าเดียว สลับได้ทันที</div>
       </div>
-      <div class="feat-item">
-        <div class="feat-ico">🎯</div>
+      <div class="feat-card">
+        <div class="feat-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg></div>
         <div class="feat-name">Target Queue</div>
         <div class="feat-desc">วางคิวเป้าหมายไม่จำกัด ติดตามสถานะแต่ละรายการแบบ real-time</div>
       </div>
-      <div class="feat-item">
-        <div class="feat-ico">🔄</div>
+      <div class="feat-card">
+        <div class="feat-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 11a8 8 0 0 0-13.7-4.6L4 8"/><path d="M4 4v4h4"/><path d="M4 13a8 8 0 0 0 13.7 4.6L20 16"/><path d="M20 20v-4h-4"/></svg></div>
         <div class="feat-name">อัปเดตอัตโนมัติ</div>
-        <div class="feat-desc">โปรแกรมดาวน์โหลดเวอร์ชันใหม่เองทุกครั้งที่มีอัปเดต ไม่ต้องลงใหม่</div>
+        <div class="feat-desc">ระบบดาวน์โหลดเวอร์ชันใหม่ให้เอง ไม่ต้องลงใหม่ ไม่ขาดตอน</div>
       </div>
-      <div class="feat-item">
-        <div class="feat-ico">📊</div>
+      <div class="feat-card">
+        <div class="feat-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20h16M7.5 20v-6M12 20v-10M16.5 20v-8"/></svg></div>
         <div class="feat-name">Stats & Log</div>
-        <div class="feat-desc">ดูสถิติและ log ประจำวัน วิเคราะห์ผลการทำงานได้ทันที</div>
+        <div class="feat-desc">ดูสถิติและ log การทำงานประจำวัน วิเคราะห์ผลได้ทันที</div>
       </div>
     </div>
   </div>
-</section>
 
-<!-- ③ HOW IT WORKS -->
-<section class="section" id="how">
-  <div class="container">
-    <div class="how-grid">
-      <div>
-        <div class="section-eyebrow">วิธีใช้งาน</div>
-        <div class="section-h">เริ่มได้ใน<br>3 ขั้นตอน</div>
-        <p class="section-sub" style="margin-bottom:40px">ไม่ต้องมีความรู้ด้านเทคนิค ติดตั้งง่าย ใช้งานได้ทันที</p>
-        <div class="steps">
-          <div class="step-item">
-            <div class="step-num">1</div>
-            <div class="step-content">
-              <div class="step-title">ติดต่อซื้อ & รับคีย์</div>
-              <div class="step-desc">ติดต่อทีมงานผ่าน Line หรือ Facebook ชำระเงินแล้วรับ License Key ทันที</div>
-            </div>
-          </div>
-          <div class="step-item">
-            <div class="step-num">2</div>
-            <div class="step-content">
-              <div class="step-title">ดาวน์โหลด & ใส่คีย์</div>
-              <div class="step-desc">ติดตั้ง FIKTH PRO บน Windows 10/11 ใส่คีย์แล้วพร้อมใช้งานได้เลย</div>
-            </div>
-          </div>
-          <div class="step-item">
-            <div class="step-num">3</div>
-            <div class="step-content">
-              <div class="step-title">ตั้งค่า & ปล่อยงาน</div>
-              <div class="step-desc">กำหนดเป้าหมาย ตั้ง queue แล้วปิดทิ้งไว้ โปรแกรมทำงานแทน 24 ชม.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="how-visual">
-        <div class="terminal-bar">
-          <div class="t-dot" style="background:#f87171"></div>
-          <div class="t-dot" style="background:#fbbf24"></div>
-          <div class="t-dot" style="background:#00e5a0"></div>
-          <span style="font-size:11px;color:var(--muted);margin-left:8px">Task Queue</span>
-        </div>
-        <div class="terminal-body">
-          <div class="t-line">
-            <div class="t-icon">📘</div>
-            <div class="t-text" style="flex:1">
-              <div class="label">Facebook Comment</div>
-              <div class="t-bar-wrap"><div class="t-bar-fill" style="width:78%"></div></div>
-            </div>
-            <div class="t-status run">78%</div>
-          </div>
-          <div class="t-line">
-            <div class="t-icon">🎮</div>
-            <div class="t-text" style="flex:1">
-              <div class="label">Discord DM</div>
-              <div class="t-bar-wrap"><div class="t-bar-fill" style="width:100%"></div></div>
-            </div>
-            <div class="t-status run">เสร็จ</div>
-          </div>
-          <div class="t-line">
-            <div class="t-icon">📢</div>
-            <div class="t-text" style="flex:1">
-              <div class="label">Group Post × 12</div>
-              <div class="t-bar-wrap"><div class="t-bar-fill" style="width:33%"></div></div>
-            </div>
-            <div class="t-status run">4/12</div>
-          </div>
-          <div class="t-line">
-            <div class="t-icon">💬</div>
-            <div class="t-text" style="flex:1">
-              <div class="label">Line Chat Broadcast</div>
-              <div class="t-bar-wrap"><div class="t-bar-fill" style="width:0%"></div></div>
-            </div>
-            <div class="t-status idle">รอ</div>
-          </div>
-          <div style="margin-top:4px;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--muted)">
-            ✅ <span style="color:var(--accent)">1,240</span> actions วันนี้ &nbsp;|&nbsp; ⏱ ทำงานมา <span style="color:var(--text)">6ชม. 14น.</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ④ PRICING -->
-<section class="section" id="pricing">
-  <div class="container">
-    <div style="text-align:center;margin-bottom:52px">
-      <div class="section-eyebrow">ราคา</div>
-      <div class="section-h">เลือกแพ็กเกจที่เหมาะกับคุณ</div>
-      <p class="section-sub" style="margin:0 auto;text-align:center">สอบถามราคาได้ที่ Discord หรือ Line ของเรา มีโปรโมชั่นประจำเดือน</p>
-    </div>
+  <!-- PRICING -->
+  <div id="view-pricing" class="view">
+    <div class="sec-label">ราคา</div>
+    <div class="sec-h">เลือกแพ็กเกจที่เหมาะกับคุณ</div>
+    <p class="sec-sub">สอบถามราคาและโปรโมชั่นพิเศษได้ที่ Discord หรือ Line ของเรา</p>
     <div class="price-grid">
       <div class="price-card">
         <div class="p-plan">รายเดือน</div>
         <div class="p-dur">30 วัน</div>
-        <div class="p-note">เหมาะสำหรับทดลองใช้</div>
-        <ul class="p-list">
+        <div class="p-note">เหมาะสำหรับเริ่มต้นทดลองใช้</div>
+        <ul class="p-feats">
           <li>ฟีเจอร์ครบทุกอย่าง</li>
           <li>อัปเดตฟรีตลอดอายุ</li>
-          <li>Windows 10/11</li>
-          <li>Support ทีมงาน</li>
+          <li>รองรับ Windows 10/11</li>
+          <li>ทีมงานพร้อมช่วยเหลือ</li>
         </ul>
-        <a href="#contact" class="p-btn p-btn-outline">สอบถามราคา</a>
+        <button class="p-btn outline" onclick="go('contact')">สอบถามราคา</button>
       </div>
       <div class="price-card featured">
-        <div class="pop-tag">⚡ ยอดนิยม</div>
+        <div class="pop-tag">ยอดนิยม</div>
         <div class="p-plan">รายไตรมาส</div>
         <div class="p-dur">90 วัน</div>
         <div class="p-note">คุ้มค่าที่สุด ประหยัดกว่ารายเดือน</div>
-        <ul class="p-list">
+        <ul class="p-feats">
           <li>ฟีเจอร์ครบทุกอย่าง</li>
           <li>อัปเดตฟรีตลอดอายุ</li>
-          <li>Windows 10/11</li>
-          <li>Support ทีมงาน</li>
+          <li>รองรับ Windows 10/11</li>
+          <li>ทีมงานพร้อมช่วยเหลือ</li>
           <li>ราคาพิเศษกว่ารายเดือน</li>
         </ul>
-        <a href="#contact" class="p-btn p-btn-fill">สอบถามราคา →</a>
+        <button class="p-btn solid" onclick="go('contact')">สอบถามราคา →</button>
       </div>
       <div class="price-card">
         <div class="p-plan">ตลอดชีพ</div>
         <div class="p-dur">Lifetime</div>
         <div class="p-note">จ่ายครั้งเดียว ใช้ได้ตลอด</div>
-        <ul class="p-list">
+        <ul class="p-feats">
           <li>ฟีเจอร์ครบทุกอย่าง</li>
           <li>อัปเดตฟรีตลอดชีพ</li>
-          <li>Windows 10/11</li>
-          <li>Support ทีมงาน</li>
+          <li>รองรับ Windows 10/11</li>
+          <li>ทีมงานพร้อมช่วยเหลือ</li>
           <li>ไม่มีค่าใช้จ่ายเพิ่ม</li>
         </ul>
-        <a href="#contact" class="p-btn p-btn-outline">สอบถามราคา</a>
+        <button class="p-btn outline" onclick="go('contact')">สอบถามราคา</button>
       </div>
     </div>
-    <p style="text-align:center;color:var(--muted);font-size:13px;margin-top:20px">
+    <p style="color:var(--muted);font-size:13px;margin-top:18px">
       ดูโปรโมชั่นพิเศษได้ที่ <a href="https://discord.gg/rhDzTdNpr" target="_blank" style="color:var(--accent);text-decoration:none">Discord Server</a> ของเรา
     </p>
   </div>
-</section>
 
-<!-- ⑤ KEY CHECK -->
-<section class="section" id="keycheck">
-  <div class="container">
-    <div class="keycheck-inner">
-      <div class="section-eyebrow">ตรวจสอบคีย์</div>
-      <div class="section-h">เช็คสถานะ<br>License ของคุณ</div>
-      <p class="section-sub">ใส่ License Key เพื่อดูสถานะ วันหมดอายุ และประเภทคีย์</p>
+  <!-- KEY CHECK -->
+  <div id="view-keycheck" class="view">
+    <div class="sec-label">ตรวจสอบคีย์</div>
+    <div class="sec-h">เช็คสถานะ License</div>
+    <p class="sec-sub">ใส่ License Key เพื่อดูสถานะ วันหมดอายุ และประเภทคีย์</p>
+    <div class="key-wrap">
       <div class="key-form">
-        <div class="key-input-wrap">
-          <input class="key-input" id="key-input" type="text" placeholder="FIKTH-XXXX-XXXXXXXX-XXXXXXXX" maxlength="40" autocomplete="off" spellcheck="false">
-        </div>
+        <input class="key-input" id="key-input" type="text" placeholder="FIKTH-XXXX-XXXXXXXX-XXXXXXXX" maxlength="40" autocomplete="off" spellcheck="false">
         <button class="key-submit" id="key-submit" onclick="checkKey()">ตรวจสอบคีย์</button>
         <div class="key-result" id="key-result"></div>
       </div>
     </div>
   </div>
-</section>
 
-<!-- ⑥ CONTACT -->
-<section class="section" id="contact">
-  <div class="container">
-    <div class="contact-inner">
-      <div>
-        <div class="section-eyebrow">ติดต่อ</div>
-        <div class="section-h">พร้อมตอบทุกคำถาม ไม่มีขั้นต่ำ</div>
-        <p class="section-sub" style="margin-bottom:0">ทีมงานออนไลน์ทุกวัน ติดต่อผ่านช่องทางที่สะดวกได้เลย</p>
-      </div>
-      <div class="contact-cards">
-        <a href="https://line.me/R/ti/p/@268wwkan" target="_blank" class="cc line">
-          <div class="cc-icon">💚</div>
-          <div>
-            <div class="cc-name">Line OA</div>
-            <div class="cc-handle">@268wwkan</div>
-          </div>
-          <div class="cc-arrow">→</div>
-        </a>
-        <a href="https://www.facebook.com/share/1FEQgvYnqC/" target="_blank" class="cc fb">
-          <div class="cc-icon">💙</div>
-          <div>
-            <div class="cc-name">Facebook Page</div>
-            <div class="cc-handle">FIKTH PRO Official</div>
-          </div>
-          <div class="cc-arrow">→</div>
-        </a>
-        <a href="https://discord.gg/rhDzTdNpr" target="_blank" class="cc dc">
-          <div class="cc-icon">💜</div>
-          <div>
-            <div class="cc-name">Discord Server</div>
-            <div class="cc-handle">discord.gg/rhDzTdNpr</div>
-          </div>
-          <div class="cc-arrow">→</div>
-        </a>
-      </div>
+  <!-- CONTACT -->
+  <div id="view-contact" class="view">
+    <div class="sec-label">ติดต่อ</div>
+    <div class="sec-h">พร้อมตอบทุกคำถาม</div>
+    <p class="sec-sub">ทีมงานออนไลน์ทุกวัน ติดต่อผ่านช่องทางที่สะดวกได้เลย ไม่มีขั้นต่ำ</p>
+    <div class="contact-list">
+      <a href="https://line.me/R/ti/p/@268wwkan" target="_blank" class="cc line">
+        <div class="cc-ico" style="background:#06c755">L</div>
+        <div><div class="cc-name">Line OA</div><div class="cc-handle">@268wwkan</div></div>
+        <div class="cc-arrow">→</div>
+      </a>
+      <a href="https://www.facebook.com/share/1FEQgvYnqC/" target="_blank" class="cc fb">
+        <div class="cc-ico" style="background:#1877f2">f</div>
+        <div><div class="cc-name">Facebook Page</div><div class="cc-handle">FIKTH PRO Official</div></div>
+        <div class="cc-arrow">→</div>
+      </a>
+      <a href="https://discord.gg/rhDzTdNpr" target="_blank" class="cc dc">
+        <div class="cc-ico" style="background:#5865f2">D</div>
+        <div><div class="cc-name">Discord Server</div><div class="cc-handle">discord.gg/rhDzTdNpr</div></div>
+        <div class="cc-arrow">→</div>
+      </a>
     </div>
   </div>
-</section>
 
-<!-- FOOTER -->
-<footer>
-  <div class="f-logo">FIKTH</div>
-  <div class="f-copy">© 2026 FIKTH PRO</div>
-  <div class="f-links">
-    <a href="https://discord.gg/rhDzTdNpr" target="_blank">Discord</a>
-    <a href="https://www.facebook.com/share/1FEQgvYnqC/" target="_blank">Facebook</a>
-    <a href="https://line.me/R/ti/p/@268wwkan" target="_blank">Line</a>
+</div>
+
+<!-- OVERLAY -->
+<div id="overlay" onclick="closeDrawer()"></div>
+
+<!-- DRAWER -->
+<div id="drawer">
+  <div class="drawer-top">
+    <span class="drawer-label">เมนู</span>
+    <button class="close-btn" onclick="closeDrawer()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
   </div>
-</footer>
+  <button class="nav-item active" id="nav-home" onclick="go('home')">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11l8-7 8 7"/><path d="M6.5 9.5V19h11V9.5"/></svg>
+    หน้าแรก
+  </button>
+  <button class="nav-item" id="nav-features" onclick="go('features')">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><rect x="13" y="13" width="7" height="7"/></svg>
+    ฟีเจอร์
+  </button>
+  <button class="nav-item" id="nav-pricing" onclick="go('pricing')">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h8l8 8-8 8-8-8z"/><circle cx="7.5" cy="7.5" r="1" fill="currentColor"/></svg>
+    ราคา
+  </button>
+  <button class="nav-item" id="nav-keycheck" onclick="go('keycheck')">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="15" r="4"/><path d="M11 12l8-8"/><path d="M17 4l2 2M15 6l2 2"/></svg>
+    ตรวจสอบคีย์
+  </button>
+  <button class="nav-item" id="nav-contact" onclick="go('contact')">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 12a8 8 0 0 1-11.5 7.2L4 20l.8-4.3A8 8 0 1 1 20 12z"/></svg>
+    ติดต่อ
+  </button>
+  <div class="drawer-footer">
+    <button class="btn-buy" onclick="go('contact')">สั่งซื้อ / สอบถามราคา</button>
+  </div>
+</div>
 
 <script>
+const pages = ['home','features','pricing','keycheck','contact'];
+
+function go(page) {
+  pages.forEach(p => {
+    document.getElementById('view-' + p).classList.toggle('active', p === page);
+    document.getElementById('nav-' + p).classList.toggle('active', p === page);
+  });
+  document.getElementById('main').scrollTop = 0;
+  closeDrawer();
+}
+
+function toggleDrawer() {
+  document.getElementById('drawer').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+}
+function closeDrawer() {
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+
+document.getElementById('key-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') checkKey();
+});
+
 async function checkKey() {
-  const input = document.getElementById('key-input');
-  const btn   = document.getElementById('key-submit');
+  const input  = document.getElementById('key-input');
+  const btn    = document.getElementById('key-submit');
   const result = document.getElementById('key-result');
-  const key = input.value.trim().toUpperCase();
+  const key    = input.value.trim().toUpperCase();
   if (!key) return;
 
   btn.disabled = true;
@@ -685,43 +410,42 @@ async function checkKey() {
   result.style.display = 'none';
 
   try {
-    const r = await fetch('https://license.fikth.online/x/k?a=' + encodeURIComponent(key));
+    const r    = await fetch('https://license.fikth.online/x/k?a=' + encodeURIComponent(key));
     const data = await r.json();
 
     if (!data.found) {
       result.className = 'key-result err';
-      result.innerHTML = '<div style="color:#f87171;font-weight:600">❌ ไม่พบคีย์นี้ในระบบ</div>';
+      result.innerHTML = '<span style="color:#f87171;font-weight:600">❌ ไม่พบคีย์นี้ในระบบ</span>';
       result.style.display = 'block';
       return;
     }
 
-    const statusMap = { active: ['✅ ใช้งานได้', 'green'], banned: ['🚫 ถูกระงับ', 'red'], expired: ['⏰ หมดอายุ', 'yellow'] };
-    const [statusText, statusColor] = statusMap[data.status] || ['—', ''];
-    const expiryText = data.permanent ? '<span class="kr-val green">ถาวร (ไม่หมดอายุ)</span>' :
-      data.days_left > 0 ? `<span class="kr-val ${data.days_left <= 7 ? 'yellow' : 'green'}">อีก ${data.days_left} วัน</span>` :
-      '<span class="kr-val red">หมดอายุแล้ว</span>';
-    const typeMap = { 'ลูกค้า': 'ลูกค้าทั่วไป', 'พาทเนอร์': 'พาทเนอร์', 'แอดมิน': 'แอดมิน' };
+    const sm  = { active:['✅ ใช้งานได้','#34d399'], banned:['🚫 ถูกระงับ','#f87171'], expired:['⏰ หมดอายุ','#fbbf24'] };
+    const [stxt, sc] = sm[data.status] || ['—','#8a94a6'];
+    const tm  = { 'ลูกค้า':'ลูกค้าทั่วไป','พาทเนอร์':'พาทเนอร์','แอดมิน':'แอดมิน' };
+    let ev, ec;
+    if (data.permanent)         { ev = 'ถาวร (ไม่หมดอายุ)'; ec = '#34d399'; }
+    else if (data.days_left > 0){ ev = 'อีก ' + data.days_left + ' วัน'; ec = data.days_left <= 7 ? '#fbbf24' : '#34d399'; }
+    else                        { ev = 'หมดอายุแล้ว'; ec = '#f87171'; }
 
     result.className = 'key-result ok';
-    result.innerHTML = `
-      <div class="kr-row"><span class="kr-label">สถานะ</span><span class="kr-val ${statusColor}">${statusText}</span></div>
-      <div class="kr-row"><span class="kr-label">ประเภท</span><span class="kr-val">${typeMap[data.type] || data.type}</span></div>
-      <div class="kr-row"><span class="kr-label">วันหมดอายุ</span>${expiryText}</div>
-    `;
+    result.innerHTML = [
+      ['สถานะ', stxt, sc],
+      ['ประเภท', tm[data.type] || data.type, ''],
+      ['วันหมดอายุ', ev, ec],
+    ].map(([l, v, c]) =>
+      `<div class="kr-row"><span class="kr-label">${l}</span><span class="kr-val" style="color:${c||'var(--text)'}">${v}</span></div>`
+    ).join('');
     result.style.display = 'block';
-  } catch(e) {
+  } catch {
     result.className = 'key-result err';
-    result.innerHTML = '<div style="color:#f87171;font-weight:600">❌ เชื่อมต่อ server ไม่ได้</div>';
+    result.innerHTML = '<span style="color:#f87171;font-weight:600">❌ เชื่อมต่อ server ไม่ได้</span>';
     result.style.display = 'block';
   } finally {
     btn.disabled = false;
     btn.textContent = 'ตรวจสอบคีย์';
   }
 }
-
-document.getElementById('key-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') checkKey();
-});
 </script>
 </body>
 </html>
