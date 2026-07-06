@@ -255,8 +255,8 @@ footer{padding:32px 0;text-align:center;color:var(--muted);font-size:12px}
       <a href="#changelog" class="btn-secondary">ดู Changelog</a>
     </div>
     <div class="hero-stats fade-in">
-      <div class="hstat"><div class="hstat-v">v4.4</div><div class="hstat-l">เวอร์ชันล่าสุด</div></div>
-      <div class="hstat"><div class="hstat-v" style="color:var(--green)">Online</div><div class="hstat-l">สถานะเซิร์ฟเวอร์</div></div>
+      <div class="hstat"><div class="hstat-v" id="hero-ver">—</div><div class="hstat-l">เวอร์ชันล่าสุด</div></div>
+      <div class="hstat"><div class="hstat-v" id="hero-status" style="color:var(--green)">—</div><div class="hstat-l">สถานะเซิร์ฟเวอร์</div></div>
       <div class="hstat"><div class="hstat-v">Win 10/11</div><div class="hstat-l">รองรับระบบปฏิบัติการ</div></div>
     </div>
   </div>
@@ -270,9 +270,9 @@ footer{padding:32px 0;text-align:center;color:var(--muted);font-size:12px}
     <p class="sec-sub fade-in">ดาวน์โหลดเวอร์ชันล่าสุด รองรับ Windows 10 และ 11 (64-bit)</p>
     <div class="dl-card fade-in">
       <div class="dl-info">
-        <div class="dl-version">FIKTH PRO v4.4</div>
-        <div class="dl-meta">Windows 64-bit · Installer · 4.38 MB</div>
-        <div class="dl-hash" onclick="copyText('2584c1f9c3e790fe46c7849c7bb960c6a51fc2d00ecb66ab45b5aba512202918')" title="คลิกเพื่อคัดลอก SHA256">SHA256: 2584c1f9c3e790fe46c7849c7bb960c6a51fc2d00ecb66ab45b5aba512202918</div>
+        <div class="dl-version" id="dl-version">FIKTH PRO —</div>
+        <div class="dl-meta" id="dl-meta">Windows 64-bit · Installer · กำลังโหลด...</div>
+        <div class="dl-hash" id="dl-hash" title="คลิกเพื่อคัดลอก SHA256">SHA256: —</div>
       </div>
       <button class="btn-dl" onclick="downloadApp()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 15V3m0 12-4-4m4 4 4-4M2 17l.621 2.485A2 2 0 0 0 4.561 21h14.878a2 2 0 0 0 1.94-1.515L22 17"/></svg>
@@ -383,28 +383,7 @@ const DL_URL    = 'https://github.com/Ding9003/fikth-releases/releases/download/
 const { createClient } = supabase;
 const sb = createClient(SUPA_URL, SUPA_KEY);
 
-// ── STATIC DATA ─────────────────────────────────────────
-const CHANGELOG = [
-  { ver:'v4.4', date:'4 ก.ค. 2026', badge:'latest', notes:[
-    'แก้ไขระบบ sub-admin token',
-    'อัปเดต flow การทำงาน',
-    'แก้ไข expiry warning',
-    'อัปเดต log path',
-  ]},
-  { ver:'v4.3', date:'1 ก.ค. 2026', badge:'stable', notes:[
-    'อัปเดต update flow',
-    'แก้ไข expiry warning',
-    'อัปเดต log path',
-    'แก้ไข sub-admin bug',
-  ]},
-  { ver:'v4.0', date:'15 มิ.ย. 2026', badge:'stable', notes:[
-    'เปิดตัว FIKTH PRO v4.0',
-    'ระบบ License แบบใหม่',
-    'เพิ่ม Discord Automation',
-    'UI ใหม่ทั้งหมด',
-  ]},
-];
-
+// ── STATIC DATA (ประกาศ — แก้ได้ตรงนี้) ────────────────
 const ANNOUNCEMENTS = [
   { type:'update', typeLabel:'อัปเดต', date:'4 ก.ค. 2026',
     title:'FIKTH PRO v4.4 พร้อมใช้งาน',
@@ -414,22 +393,86 @@ const ANNOUNCEMENTS = [
     body:'มีโปรพิเศษสำหรับสมาชิก Discord เซิร์ฟเวอร์ของเรา เข้ามาสอบถามได้เลยครับ' },
 ];
 
-// ── BUILD CHANGELOG ─────────────────────────────────────
-function buildChangelog() {
+// ── FETCH VERSIONS FROM SERVER ───────────────────────────
+const INSTALLER_URL  = 'https://github.com/Ding9003/fikth-releases/releases/download/0.0.01/FIKTH_PRO_Setup.exe';
+const INSTALLER_SHA  = '2584c1f9c3e790fe46c7849c7bb960c6a51fc2d00ecb66ab45b5aba512202918';
+const INSTALLER_SIZE = '4.38 MB';
+
+async function loadVersionsFromServer() {
+  try {
+    const r    = await fetch(`${LIC_URL}/api/versions`);
+    const list = await r.json();
+    if (!Array.isArray(list) || !list.length) return;
+
+    // หาเวอร์ชัน latest
+    const latest = list.find(v => v.is_latest) || list[0];
+
+    // อัปเดต hero stat
+    document.getElementById('hero-ver').textContent = 'v' + latest.version;
+
+    // อัปเดต download card
+    document.getElementById('dl-version').textContent = 'FIKTH PRO v' + latest.version;
+    document.getElementById('dl-meta').textContent    = 'Windows 64-bit · Installer · ' + INSTALLER_SIZE;
+    const dlHash = document.getElementById('dl-hash');
+    dlHash.textContent = 'SHA256: ' + INSTALLER_SHA;
+    dlHash.onclick     = () => copyText(INSTALLER_SHA);
+    dlHash.title       = 'คลิกเพื่อคัดลอก SHA256';
+
+    // สร้าง changelog จาก API
+    buildChangelog(list);
+  } catch {
+    // fallback: ใช้ข้อมูลสำรอง
+    document.getElementById('hero-ver').textContent = 'v4.4';
+    document.getElementById('dl-version').textContent = 'FIKTH PRO v4.4';
+    document.getElementById('dl-meta').textContent    = 'Windows 64-bit · Installer · ' + INSTALLER_SIZE;
+    buildChangelog([]);
+  }
+}
+
+// ── CHECK SERVER STATUS ──────────────────────────────────
+async function checkServerStatus() {
+  try {
+    const r = await fetch(`${LIC_URL}/health`, { signal: AbortSignal.timeout(4000) });
+    const ok = r.ok;
+    const el = document.getElementById('hero-status');
+    el.textContent = ok ? 'Online' : 'Degraded';
+    el.style.color = ok ? 'var(--green)' : 'var(--accent)';
+  } catch {
+    const el = document.getElementById('hero-status');
+    el.textContent = 'Offline';
+    el.style.color = 'var(--red)';
+  }
+}
+
+// ── BUILD CHANGELOG (จาก API) ────────────────────────────
+function buildChangelog(list) {
   const el = document.getElementById('changelog-list');
-  el.innerHTML = CHANGELOG.map((c,i) => `
+  if (!list.length) {
+    el.innerHTML = '<div style="color:var(--muted2);font-size:13px">ไม่สามารถโหลด changelog ได้</div>';
+    return;
+  }
+  el.innerHTML = list.map((v, i) => {
+    const notes = v.notes
+      ? v.notes.split(/\\n|\n/).filter(Boolean).map(n => `<li>${n.replace(/^[-•]\s*/,'')}</li>`).join('')
+      : '<li>อัปเดตระบบ</li>';
+    const badge = v.is_latest ? 'badge-latest' : 'badge-stable';
+    const label = v.is_latest ? 'LATEST' : 'STABLE';
+    return `
     <div class="cl-item">
       <div class="cl-head" onclick="toggleCL(${i})">
-        <span class="cl-badge ${c.badge==='latest'?'badge-latest':'badge-stable'}">${c.badge==='latest'?'LATEST':'STABLE'}</span>
-        <span class="cl-ver">${c.ver}</span>
-        <span class="cl-date">${c.date}</span>
+        <span class="cl-badge ${badge}">${label}</span>
+        <span class="cl-ver">v${v.version}</span>
+        <span class="cl-date">${v.size ? v.size : ''}</span>
         <span class="cl-arrow" id="cl-arrow-${i}">▼</span>
       </div>
       <div class="cl-body ${i===0?'open':''}" id="cl-body-${i}">
-        <ul>${c.notes.map(n=>`<li>${n}</li>`).join('')}</ul>
+        <ul>${notes}</ul>
+        ${v.download_url ? `<div style="margin-top:10px"><a href="${v.download_url}" style="color:var(--muted);font-size:11px;font-family:'JetBrains Mono',monospace">↓ ${v.download_url.split('/').pop()}</a></div>` : ''}
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
+
 function toggleCL(i) {
   const body  = document.getElementById('cl-body-'+i);
   const arrow = document.getElementById('cl-arrow-'+i);
@@ -681,10 +724,11 @@ function initFadeIn() {
 }
 
 // ── INIT ─────────────────────────────────────────────────
-buildChangelog();
 buildAnn();
 initFadeIn();
 initAuth();
+loadVersionsFromServer();
+checkServerStatus();
 </script>
 </body>
 </html>
